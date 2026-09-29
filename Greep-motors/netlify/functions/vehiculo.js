@@ -1,59 +1,64 @@
-exports.handler = async function(event, context) {
-    const placa = event.queryStringParameters ? event.queryStringParameters.placa : null;
+const { google } = require('googleapis');
 
-    if (!placa) {
+exports.handler = async function(event, context) {
+    const placaBuscada = event.queryStringParameters.placa;
+
+    if (!placaBuscada) {
         return {
             statusCode: 400,
-            body: JSON.stringify({ error: "Falta el código de placa" }),
-        };
-    }
-
-    const SHEETDB_API_URL = process.env.SHEETDB_API_URL;
-
-    if (!SHEETDB_API_URL) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: "La variable SHEETDB_API_URL no está configurada" }),
+            body: JSON.stringify({ error: "Falta el parámetro 'placa'" })
         };
     }
 
     try {
-        // Probamos buscando de manera genérica o directo con el nombre exacto de la columna en la hoja
-        const url = `${SHEETDB_API_URL}/search?Placas=${encodeURIComponent(placa)}`;
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            throw new Error(`Error en SheetDB: ${response.statusText}`);
+        // Autenticación con Google Sheets usando variables de entorno de Netlify
+        const auth = new google.auth.GoogleAuth({
+            credentials: {
+                client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+                private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+            },
+            scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+        });
+
+        const sheets = google.sheets({ version: 'v4', auth });
+        const spreadsheetId = process.env.GOOGLE_SHEET_ID; // El ID de tu hoja de cálculo Taller_BD
+
+        // Leer los datos de la hoja (asumiendo que se llama "Hoja 1" o la primera pestaña)
+        const response = await sheets.spreadsheets.values.get({
+            spreadsheetId,
+            range: 'A:G', // Tus columnas van de la A a la G
+        });
+
+        const rows = response.data.values;
+        if (!rows || rows.length < 2) {
+            return { statusCode: 200, body: JSON.stringify([]) };
         }
 
-        const data = await response.json();
+        const headers = rows[0]; // Encabezados: Foto, Modelo_Veiculo, Placas_Veiculo, etc.
+        const dataRows = rows.slice(1);
 
-        // Si la búsqueda estricta regresa vacío, intentamos traer todos los datos para depurar
-        // (esto te ayudará a ver si SheetDB está leyendo la hoja correcta)
-        if (data.length === 0) {
-            const allResponse = await fetch(SHEETDB_API_URL);
-            const allData = await allResponse.json();
-            
-            return {
-                statusCode: 200,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    mensaje: "No se encontró coincidencia exacta con ?Placas=",
-                    placaBuscada: placa,
-                    registrosTotalesEnHoja: allData
-                }, null, 2)
-            };
-        }
+        // Buscar la fila que coincida con la placa buscada (Columna C -> índice 2)
+        const vehiculoEncontrado = dataRows
+            .map(row => {
+                let obj = {};
+                headers.forEach((header, index) => {
+                    obj[header] = row[index] || "";
+                });
+                return obj;
+            })
+            .filter(auto => auto.Placas_Veiculo && auto.Placas_Veiculo.trim().toUpperCase() === placaBuscada.trim().toUpperCase());
 
         return {
             statusCode: 200,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data, null, 2),
+            body: JSON.stringify(vehiculoEncontrado),
         };
+
     } catch (error) {
+        console.error("Error al conectar con Google Sheets:", error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: "Error al conectar con la base de datos", detalle: error.message }),
+            body: JSON.stringify({ error: "Error interno al consultar la base de datos" })
         };
     }
 };
