@@ -11,19 +11,19 @@ exports.handler = async function(event, context) {
     const placaBuscada = event.queryStringParameters.placa.trim().toUpperCase();
     const sheetDbUrl = process.env.SHEETDB_API_URL;
 
-    // 2. Validar que la variable de entorno de SheetDB esté configurada en Netlify
+    // 2. Validar que la variable de entorno de SheetDB exista
     if (!sheetDbUrl) {
-        console.error("Falta la variable de entorno SHEETDB_API_URL en Netlify");
+        console.error("Falta la variable de entorno SHEETDB_API_URL");
         return {
             statusCode: 500,
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ error: "Configuración incompleta en el servidor" })
+            body: JSON.stringify({ error: "Configuración incompleta: falta SHEETDB_API_URL" })
         };
     }
 
     try {
-        // 3. Consultar SheetDB buscando directamente por la columna de placas
-        // Nota: Asegúrate de que en tu Excel la columna se llame exactamente 'Placas_Veiculo'
+        // 3. Consultar SheetDB filtrando por la columna de placas de tu Excel
+        // Nota: Asegúrate de que en tu Google Sheet la columna se llame exactamente 'Placas_Veiculo'
         const urlBusqueda = `${sheetDbUrl}/search?Placas_Veiculo=${encodeURIComponent(placaBuscada)}`;
         
         const response = await fetch(urlBusqueda);
@@ -31,7 +31,6 @@ exports.handler = async function(event, context) {
 
         console.log(`Búsqueda SheetDB [${placaBuscada}] - Resultados:`, JSON.stringify(data));
 
-        // SheetDB devuelve un arreglo con los resultados encontrados
         return {
             statusCode: 200,
             headers: { "Content-Type": "application/json" },
