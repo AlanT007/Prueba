@@ -25,13 +25,16 @@ if (!placaBusqueda) {
     spanEstatus.classList.remove('loading');
     imgText.textContent = "Sin placa en URL";
 } else {
-    spanPlaca.textContent = placaBusqueda.toUpperCase();
+    // Normalizamos la placa de búsqueda a mayúsculas y sin espacios
+    const placaLimpia = placaBusqueda.trim().toUpperCase();
+    spanPlaca.textContent = placaLimpia;
 
     // Petición segura a la función serverless de Netlify
-    fetch(`/.netlify/functions/vehiculo?placa=${encodeURIComponent(placaBusqueda)}`)
+    fetch(`/.netlify/functions/vehiculo?placa=${encodeURIComponent(placaLimpia)}`)
         .then(response => response.json())
         .then(data => {
-            if (data && data.length > 0) {
+            // Validamos si llegó un arreglo válido y con elementos
+            if (data && Array.isArray(data) && data.length > 0) {
                 const auto = data[0];
                 
                 spanModelo.textContent = auto.Modelo_Veiculo || "No registrado";
