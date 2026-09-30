@@ -11,67 +11,96 @@ const imgContainer = document.getElementById('image-wrapper-container');
 const imgText = document.getElementById('img-text');
 const qrImg = document.getElementById('qr-img');
 
-// Generar código QR dinámico apuntando a la URL actual
-const paginaActual = window.location.href;
-qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(paginaActual)}`;
+// 1. Generar Código QR
+try {
+    const paginaActual = window.location.href;
+    if (qrImg) {
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(paginaActual)}`;
+    }
+} catch (e) {
+    console.error("Error al generar QR:", e);
+}
 
+// 2. Validar Parámetro de Placa
 if (!placaBusqueda) {
-    spanPlaca.textContent = "No especificada";
-    spanModelo.textContent = "---";
-    spanKilometraje.textContent = "---";
-    spanFecha.textContent = "---";
-    spanDescripcion.textContent = "---";
-    spanEstatus.textContent = "Falta código de placa";
-    spanEstatus.classList.remove('loading');
-    imgText.textContent = "Sin placa en URL";
+    if (spanPlaca) spanPlaca.textContent = "No especificada";
+    if (spanModelo) spanModelo.textContent = "---";
+    if (spanKilometraje) spanKilometraje.textContent = "---";
+    if (spanFecha) spanFecha.textContent = "---";
+    if (spanDescripcion) spanDescripcion.textContent = "---";
+    if (spanEstatus) {
+        spanEstatus.textContent = "Falta código de placa";
+        spanEstatus.classList.remove('loading');
+    }
+    if (imgText) {
+        imgText.textContent = "Sin placa en URL";
+        imgText.classList.remove('loading');
+    }
 } else {
     const placaLimpia = placaBusqueda.trim().toUpperCase();
-    spanPlaca.textContent = placaLimpia;
+    if (spanPlaca) spanPlaca.textContent = placaLimpia;
 
     fetch(`/.netlify/functions/vehiculo?placa=${encodeURIComponent(placaLimpia)}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP Error status: ${response.status}`);
+            return response.json();
+        })
         .then(data => {
             if (data && Array.isArray(data) && data.length > 0) {
                 const auto = data[0];
-                
-                spanModelo.textContent = auto.Modelo_Veiculo || "No registrado";
-                spanKilometraje.textContent = auto.Kilometraje_actual ? `${auto.Kilometraje_actual} km` : "No registrado";
-                spanFecha.textContent = auto.Fecha_entrega || "Por definir";
-                spanDescripcion.textContent = auto.Descripcion_Servicio || "Sin observaciones";
-                spanEstatus.textContent = auto.Estatus || "Sin estatus";
-                spanEstatus.classList.remove('loading');
 
-                // --- MANEJO INTELIGENTE Y RUTA CORREGIDA DE LA FOTO ---
-                if (auto.Foto && auto.Foto.trim() !== "" && auto.Foto !== "Archivo") {
-                    let fotoValor = auto.Foto.trim();
+                if (spanModelo) spanModelo.textContent = auto.Modelo_Veiculo || "No registrado";
+                if (spanKilometraje) spanKilometraje.textContent = auto.Kilometraje_actual ? `${auto.Kilometraje_actual} km` : "No registrado";
+                if (spanFecha) spanFecha.textContent = auto.Fecha_entrega || "Por definir";
+                if (spanDescripcion) spanDescripcion.textContent = auto.Descripcion_Servicio || "Sin observaciones";
+                if (spanEstatus) {
+                    spanEstatus.textContent = auto.Estatus || "Sin estatus";
+                    spanEstatus.classList.remove('loading');
+                }
 
-                    // 1. Limpiar imágenes anteriores para evitar encimado
+                // --- MANEJO SEGURO DE LA FOTO ---
+                // Busca en distintas variaciones de nombre de columna en Excel/SheetDB
+                const fotoRaw = auto.Foto || auto.foto || auto.Imagen || auto.URL || auto.Foto_Veiculo || "";
+                const fotoValor = String(fotoRaw).trim();
+
+                if (fotoValor !== "" && fotoValor !== "null" && fotoValor !== "undefined" && fotoValor !== "Archivo") {
+                    let rutaFinal = "";
+
+                    // Limpiar imágenes previas
                     const imgExistente = imgContainer.querySelector('img');
-                    if (imgExistente) {
-                        imgExistente.remove();
+                    if (imgExistente) imgExistente.remove();
+
+                    // CASO A: Enlace de Google Drive
+                    if (fotoValor.includes('drive.google.com')) {
+                        const match = fotoValor.match(/\/d\/([^\/]+)/) || fotoValor.match(/id=([^&]+)/);
+                        if (match && match[1]) {
+                            rutaFinal = `https://lh3.googleusercontent.com/d/${match[1]}`;
+                        } else {
+                            rutaFinal = fotoValor;
+                        }
+                    } 
+                    // CASO B: Enlace web directo (http/https)
+                    else if (fotoValor.startsWith('http://') || fotoValor.startsWith('https://')) {
+                        rutaFinal = fotoValor;
+                    } 
+                    // CASO C: Imagen guardada en servidor local
+                    else {
+                        const archivoLimpio = fotoValor.replace(/^(\.\.\/|\.\/|\/)+/, '').replace(/^imagenes\//, '');
+                        rutaFinal = `./imagenes/${archivoLimpio}`;
                     }
 
-                    // 2. Resolver la ruta correctamente
-                    let rutaFinal = fotoValor;
-
-                    if (!fotoValor.startsWith('http://') && !fotoValor.startsWith('https://')) {
-                        // Limpia prefijos antiguos como "../", "/" o "imagenes/" si venían incluidos
-                        const nombreArchivo = fotoValor.replace(/^(\.\.\/|\.\/|\/)+/, '').replace(/^imagenes\//, '');
-                        // Arma la ruta relativa estándar
-                        rutaFinal = `./imagenes/${nombreArchivo}`;
-                    }
-
-                    // 3. Renderizar la imagen
+                    // Insertar imagen
                     imgText.style.display = "none";
                     const imgElement = document.createElement('img');
                     imgElement.src = rutaFinal;
                     imgElement.alt = "Foto del Vehículo";
-                    
-                    // Si falla la carga de la imagen (por ejemplo si el archivo no existe o el nombre está mal escrito)
+
                     imgElement.onerror = function() {
                         this.remove();
                         imgText.style.display = "block";
-                        imgText.textContent = `No se encontró: ${nombreArchivo || fotoValor}`;
+                        imgText.style.fontSize = "0.75rem";
+                        imgText.textContent = `No se encontró: "${rutaFinal}"`;
+                        imgText.classList.remove('loading');
                     };
 
                     imgContainer.insertBefore(imgElement, imgContainer.firstChild);
@@ -82,24 +111,30 @@ if (!placaBusqueda) {
                 }
 
             } else {
-                spanModelo.textContent = "No encontrado";
-                spanKilometraje.textContent = "---";
-                spanFecha.textContent = "---";
-                spanDescripcion.textContent = "---";
-                spanEstatus.textContent = "Vehículo no registrado";
-                spanEstatus.classList.remove('loading');
-                imgText.style.display = "block";
-                imgText.textContent = "Vehículo no encontrado";
-                imgText.classList.remove('loading');
+                if (spanModelo) spanModelo.textContent = "No encontrado";
+                if (spanEstatus) {
+                    spanEstatus.textContent = "Vehículo no registrado";
+                    spanEstatus.classList.remove('loading');
+                }
+                if (imgText) {
+                    imgText.style.display = "block";
+                    imgText.textContent = "Vehículo no encontrado";
+                    imgText.classList.remove('loading');
+                }
             }
         })
         .catch(error => {
-            console.error("Error al conectar:", error);
-            spanModelo.textContent = "Error de red";
-            spanEstatus.textContent = "Error de conexión";
-            spanEstatus.classList.remove('loading');
-            imgText.style.display = "block";
-            imgText.textContent = "Error de carga";
-            imgText.classList.remove('loading');
+            console.error("Error en la ejecución:", error);
+            if (spanModelo) spanModelo.textContent = "Error";
+            if (spanEstatus) {
+                spanEstatus.textContent = "Error de conexión";
+                spanEstatus.classList.remove('loading');
+            }
+            if (imgText) {
+                imgText.style.display = "block";
+                imgText.style.fontSize = "0.75rem";
+                imgText.textContent = `Error: ${error.message}`;
+                imgText.classList.remove('loading');
+            }
         });
 }
