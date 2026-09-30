@@ -11,7 +11,7 @@ const imgContainer = document.getElementById('image-wrapper-container');
 const imgText = document.getElementById('img-text');
 const qrImg = document.getElementById('qr-img');
 
-// Generar código QR dinámico apuntando a la URL actual de la página
+// Generar código QR dinámico apuntando a la URL actual
 const paginaActual = window.location.href;
 qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(paginaActual)}`;
 
@@ -25,15 +25,12 @@ if (!placaBusqueda) {
     spanEstatus.classList.remove('loading');
     imgText.textContent = "Sin placa en URL";
 } else {
-    // Normalizamos la placa de búsqueda a mayúsculas y sin espacios
     const placaLimpia = placaBusqueda.trim().toUpperCase();
     spanPlaca.textContent = placaLimpia;
 
-    // Petición segura a la función serverless de Netlify
     fetch(`/.netlify/functions/vehiculo?placa=${encodeURIComponent(placaLimpia)}`)
         .then(response => response.json())
         .then(data => {
-            // Validamos si llegó un arreglo válido y con elementos
             if (data && Array.isArray(data) && data.length > 0) {
                 const auto = data[0];
                 
@@ -44,31 +41,39 @@ if (!placaBusqueda) {
                 spanEstatus.textContent = auto.Estatus || "Sin estatus";
                 spanEstatus.classList.remove('loading');
 
-                // --- MANEJO INTELIGENTE DE LA FOTO ---
+                // --- MANEJO INTELIGENTE Y RUTA CORREGIDA DE LA FOTO ---
                 if (auto.Foto && auto.Foto.trim() !== "" && auto.Foto !== "Archivo") {
                     let fotoValor = auto.Foto.trim();
 
-                    // 1. Eliminar cualquier imagen que se haya cargado antes para evitar superposición
+                    // 1. Limpiar imágenes anteriores para evitar encimado
                     const imgExistente = imgContainer.querySelector('img');
                     if (imgExistente) {
                         imgExistente.remove();
                     }
 
-                    // 2. Construir la ruta correcta
-                    // Si trae solo "nombre.jpg", le anteponemos "../imagenes/"
+                    // 2. Resolver la ruta correctamente
                     let rutaFinal = fotoValor;
-                    if (!fotoValor.startsWith('http://') && 
-                        !fotoValor.startsWith('https://') && 
-                        !fotoValor.startsWith('../imagenes/') && 
-                        !fotoValor.startsWith('imagenes/')) {
-                        rutaFinal = `../imagenes/${fotoValor}`;
+
+                    if (!fotoValor.startsWith('http://') && !fotoValor.startsWith('https://')) {
+                        // Limpia prefijos antiguos como "../", "/" o "imagenes/" si venían incluidos
+                        const nombreArchivo = fotoValor.replace(/^(\.\.\/|\.\/|\/)+/, '').replace(/^imagenes\//, '');
+                        // Arma la ruta relativa estándar
+                        rutaFinal = `./imagenes/${nombreArchivo}`;
                     }
 
-                    // 3. Crear y mostrar el elemento de imagen
+                    // 3. Renderizar la imagen
                     imgText.style.display = "none";
                     const imgElement = document.createElement('img');
                     imgElement.src = rutaFinal;
                     imgElement.alt = "Foto del Vehículo";
+                    
+                    // Si falla la carga de la imagen (por ejemplo si el archivo no existe o el nombre está mal escrito)
+                    imgElement.onerror = function() {
+                        this.remove();
+                        imgText.style.display = "block";
+                        imgText.textContent = `No se encontró: ${nombreArchivo || fotoValor}`;
+                    };
+
                     imgContainer.insertBefore(imgElement, imgContainer.firstChild);
                 } else {
                     imgText.style.display = "block";
