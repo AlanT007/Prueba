@@ -59,7 +59,6 @@ if (!placaBusqueda) {
                 }
 
                 // --- MANEJO SEGURO DE LA FOTO ---
-                // Busca en distintas variaciones de nombre de columna en Excel/SheetDB
                 const fotoRaw = auto.Foto || auto.foto || auto.Imagen || auto.URL || auto.Foto_Veiculo || "";
                 const fotoValor = String(fotoRaw).trim();
 
@@ -85,8 +84,9 @@ if (!placaBusqueda) {
                     } 
                     // CASO C: Imagen guardada en servidor local
                     else {
-                        const archivoLimpio = fotoValor.replace(/^(\.\.\/|\.\/|\/)+/, '').replace(/^imagenes\//, '');
-                        rutaFinal = `./imagenes/${archivoLimpio}`;
+                        // Extrae ÚNICAMENTE el nombre del archivo (ej. "Imagen1.jpg" o "Imagen2.jpg"), eliminando carpetas como "Imagenes/" o "imagenes/"
+                        const nombreArchivo = fotoValor.split('/').pop().split('\\').pop();
+                        rutaFinal = `./imagen/${nombreArchivo}`;
                     }
 
                     // Insertar imagen
@@ -95,11 +95,18 @@ if (!placaBusqueda) {
                     imgElement.src = rutaFinal;
                     imgElement.alt = "Foto del Vehículo";
 
+                    // Fallback automático: si falla la ruta /imagen/, reintenta automáticamente en /imagenes/
                     imgElement.onerror = function() {
+                        if (this.src.includes('/imagen/')) {
+                            this.src = this.src.replace('/imagen/', '/imagenes/');
+                            return;
+                        }
+
                         this.remove();
                         imgText.style.display = "block";
                         imgText.style.fontSize = "0.75rem";
-                        imgText.textContent = `No se encontró: "${rutaFinal}"`;
+                        const soloNombre = fotoValor.split('/').pop().split('\\').pop();
+                        imgText.textContent = `No se encontró la imagen: "${soloNombre}"`;
                         imgText.classList.remove('loading');
                     };
 
