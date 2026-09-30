@@ -44,13 +44,34 @@ if (!placaBusqueda) {
                 spanEstatus.textContent = auto.Estatus || "Sin estatus";
                 spanEstatus.classList.remove('loading');
 
+                // --- MANEJO INTELIGENTE DE LA FOTO ---
                 if (auto.Foto && auto.Foto.trim() !== "" && auto.Foto !== "Archivo") {
+                    let fotoValor = auto.Foto.trim();
+
+                    // 1. Eliminar cualquier imagen que se haya cargado antes para evitar superposición
+                    const imgExistente = imgContainer.querySelector('img');
+                    if (imgExistente) {
+                        imgExistente.remove();
+                    }
+
+                    // 2. Construir la ruta correcta
+                    // Si trae solo "nombre.jpg", le anteponemos "../imagenes/"
+                    let rutaFinal = fotoValor;
+                    if (!fotoValor.startsWith('http://') && 
+                        !fotoValor.startsWith('https://') && 
+                        !fotoValor.startsWith('../imagenes/') && 
+                        !fotoValor.startsWith('imagenes/')) {
+                        rutaFinal = `../imagenes/${fotoValor}`;
+                    }
+
+                    // 3. Crear y mostrar el elemento de imagen
                     imgText.style.display = "none";
                     const imgElement = document.createElement('img');
-                    imgElement.src = auto.Foto;
+                    imgElement.src = rutaFinal;
                     imgElement.alt = "Foto del Vehículo";
                     imgContainer.insertBefore(imgElement, imgContainer.firstChild);
                 } else {
+                    imgText.style.display = "block";
                     imgText.textContent = "Sin foto registrada";
                     imgText.classList.remove('loading');
                 }
@@ -62,6 +83,7 @@ if (!placaBusqueda) {
                 spanDescripcion.textContent = "---";
                 spanEstatus.textContent = "Vehículo no registrado";
                 spanEstatus.classList.remove('loading');
+                imgText.style.display = "block";
                 imgText.textContent = "Vehículo no encontrado";
                 imgText.classList.remove('loading');
             }
@@ -71,6 +93,7 @@ if (!placaBusqueda) {
             spanModelo.textContent = "Error de red";
             spanEstatus.textContent = "Error de conexión";
             spanEstatus.classList.remove('loading');
+            imgText.style.display = "block";
             imgText.textContent = "Error de carga";
             imgText.classList.remove('loading');
         });
