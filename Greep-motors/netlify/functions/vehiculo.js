@@ -23,7 +23,6 @@ exports.handler = async function(event, context) {
 
     try {
         // 3. Consultar SheetDB filtrando por la columna de placas de tu Excel
-        // Nota: Asegúrate de que en tu Google Sheet la columna se llame exactamente 'Placas_Veiculo'
         const urlBusqueda = `${sheetDbUrl}/search?Placas_Veiculo=${encodeURIComponent(placaBuscada)}`;
         
         const response = await fetch(urlBusqueda);
