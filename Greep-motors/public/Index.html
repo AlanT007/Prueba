@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estatus de tu Vehículo - GreeP Motors ELITE</title>
+    <title>Estatus de tu Vehículo - GreP Motors Pro</title>
     <link rel="stylesheet" href="Pruebas.css">
 </head>
 <body>
@@ -40,40 +40,46 @@
                 </div>
             </div>
 
-            <!-- Columna Derecha: Información del Servicio -->
+            <!-- Columna Derecha: Información del Servicio en Tarjetas -->
             <div class="right-section">
-                <div>
+                <div class="header-container">
                     <div class="brand-header">
-                        <h2>GreeP Motors <span class="badge-pro">ELITE</span></h2>
+                        <h2>GreP Motors</h2>
+                        <span class="badge-pro">PRO</span>
                     </div>
+                </div>
 
-                    <div class="info-group">
+                <!-- Contenedor de Datos con Tarjetas Destacadas -->
+                <div class="data-grid-cards">
+                    <div class="data-card">
                         <span class="label">Placa buscada</span>
                         <span id="placa" class="value loading">Leyendo...</span>
                     </div>
 
-                    <div class="info-group">
+                    <div class="data-card">
                         <span class="label">Vehículo</span>
                         <span id="modelo" class="value loading">Cargando...</span>
                     </div>
 
-                    <div class="info-group">
-                        <span class="label">Kilometraje</span>
-                        <span id="kilometraje" class="value loading">---</span>
+                    <div class="data-grid-row">
+                        <div class="data-card">
+                            <span class="label">Kilometraje</span>
+                            <span id="kilometraje" class="value loading">---</span>
+                        </div>
+                        <div class="data-card">
+                            <span class="label">Entrega Estimada</span>
+                            <span id="fecha" class="value loading">---</span>
+                        </div>
                     </div>
 
-                    <div class="info-group">
-                        <span class="label">Entrega Estimada</span>
-                        <span id="fecha" class="value loading">---</span>
-                    </div>
-
-                    <div class="info-group">
-                        <span class="label">Descripción</span>
+                    <div class="data-card description-card">
+                        <span class="label">Descripción del Servicio</span>
                         <span id="descripcion" class="value loading">---</span>
                     </div>
                 </div>
 
                 <div>
+                    <!-- Tarjeta de Estatus Dinámica -->
                     <div class="status-card">
                         <div class="status-indicator-dot"></div>
                         <span class="label">Estatus Actual</span>
@@ -85,7 +91,7 @@
 
         <!-- Barra Inferior: Soporte WhatsApp y Redes Sociales -->
         <div class="footer-bar">
-            <!-- Botón de Ayuda WhatsApp con efecto luminoso -->
+            <!-- Botón de Ayuda WhatsApp -->
             <a href="https://wa.me/5215500000000?text=Hola,%20necesito%20información%20sobre%20el%20estatus%20de%20mi%20vehículo." target="_blank" class="whatsapp-support">
                 <div class="wa-icon">💬</div>
                 <div class="wa-text">
@@ -95,7 +101,7 @@
                 <div class="wa-arrow">→</div>
             </a>
 
-            <!-- Redes Sociales en forma de "Bolitas" (Circular Badges con colores y vectores) -->
+            <!-- Redes Sociales en forma de "Bolitas" (Circular Badges con vectores) -->
             <div class="social-icons">
                 <a href="https://tiktok.com" target="_blank" class="social-btn tiktok" title="TikTok">
                     <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
