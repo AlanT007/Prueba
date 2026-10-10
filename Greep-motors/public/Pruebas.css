@@ -3,8 +3,8 @@
    ========================================================================== */
 :root {
     --bg-color: #020205;
-    --card-bg: rgba(14, 14, 18, 0.75);
-    --card-border: rgba(255, 255, 255, 0.08);
+    --card-bg: rgba(14, 14, 18, 0.8);
+    --card-border: rgba(255, 255, 255, 0.1);
     --text-primary: #ffffff;
     --text-muted: #86868b;
     
@@ -172,7 +172,7 @@ body {
 }
 
 .qr-section {
-    background: rgba(255, 255, 255, 0.015);
+    background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--card-border);
     border-radius: 20px;
     padding: 1.15rem;
@@ -219,7 +219,7 @@ body {
 }
 
 /* ==========================================================================
-   COLUMNA DERECHA: DATOS ALTAMENTE RESALTADOS PARA EL USUARIO
+   COLUMNA DERECHA: DATOS DEL CLIENTE CON ESTILO APPLE PRO (ALTO IMPACTO)
    ========================================================================== */
 .right-section {
     display: flex;
@@ -259,35 +259,35 @@ body {
 .data-grid-cards {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0.65rem;
 }
 
 .data-grid-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.6rem;
+    gap: 0.65rem;
 }
 
-/* Estilo individual de cada Tarjeta de Dato */
+/* Tarjeta individual de cada dato */
 .data-card {
-    background: rgba(255, 255, 255, 0.035);
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    border-radius: 14px;
-    padding: 0.85rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 0.95rem 1.15rem;
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
+    gap: 0.35rem;
     transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .data-card:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(0, 113, 227, 0.5);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(0, 113, 227, 0.7);
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0, 113, 227, 0.15);
+    box-shadow: 0 10px 30px rgba(0, 113, 227, 0.25);
 }
 
-/* Etiqueta superior pequeña */
+/* Etiqueta superior (pequeña y legible) */
 .data-card .label {
     font-size: 0.68rem;
     text-transform: uppercase;
@@ -296,35 +296,37 @@ body {
     font-weight: 700;
 }
 
-/* DATO PRINCIPAL: Súper visible, blanco nítido, sin cursiva, con ligero brillo */
+/* VALOR PRINCIPAL: Estilo Apple Pro tipografía fuerte, blanca, nítida, sin cursiva */
 .data-card .value {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #ffffff;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    font-style: normal !important;
     letter-spacing: -0.01em;
     word-break: break-word;
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
-/* Estado de carga */
+/* Estado de carga (gris tenue solo antes de recibir datos) */
 .data-card .value.loading {
-    font-size: 0.9rem;
-    color: var(--text-muted) !important;
-    font-style: italic;
-    font-weight: 400;
-    text-shadow: none;
+    font-size: 0.95rem !important;
+    color: #86868b !important;
+    font-style: italic !important;
+    font-weight: 400 !important;
+    text-shadow: none !important;
 }
 
 .description-card {
-    background: rgba(0, 113, 227, 0.04);
-    border-color: rgba(0, 113, 227, 0.25);
+    background: rgba(0, 113, 227, 0.08);
+    border-color: rgba(0, 113, 227, 0.35);
 }
 
 .description-card .value {
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.35;
-    color: #f5f5f7;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    line-height: 1.4;
+    color: #ffffff !important;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
 }
 
 /* ==========================================================================
@@ -367,7 +369,7 @@ body {
 }
 
 .status {
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-weight: 800;
     color: #4da3ff;
     text-shadow: 0 0 15px rgba(0, 113, 227, 0.7);
