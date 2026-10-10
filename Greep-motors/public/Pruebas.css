@@ -3,14 +3,12 @@
    ========================================================================== */
 :root {
     --bg-color: #020205;
-    --card-bg: rgba(14, 14, 18, 0.8);
-    --card-border: rgba(255, 255, 255, 0.1);
+    --card-bg: rgba(14, 14, 18, 0.85);
+    --card-border: rgba(255, 255, 255, 0.12);
     --text-primary: #ffffff;
     --text-muted: #86868b;
     
     --accent-blue: #0071e3;
-    --accent-glow: rgba(0, 113, 227, 0.4);
-    
     --whatsapp-color: #25d366;
     --tiktok-color: #ff0050;
     --instagram-color: #e1306c;
@@ -219,7 +217,7 @@ body {
 }
 
 /* ==========================================================================
-   COLUMNA DERECHA: DATOS DEL CLIENTE CON ESTILO APPLE PRO (ALTO IMPACTO)
+   COLUMNA DERECHA: DATOS DEL CLIENTE (BLANCO PURO, NITIDOS, SIN CURSIVA)
    ========================================================================== */
 .right-section {
     display: flex;
@@ -268,26 +266,24 @@ body {
     gap: 0.65rem;
 }
 
-/* Tarjeta individual de cada dato */
 .data-card {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 16px;
     padding: 0.95rem 1.15rem;
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: all 0.35s ease;
 }
 
 .data-card:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(0, 113, 227, 0.12), rgba(255, 255, 255, 0.05));
     border-color: rgba(0, 113, 227, 0.7);
     transform: translateY(-2px);
     box-shadow: 0 10px 30px rgba(0, 113, 227, 0.25);
 }
 
-/* Etiqueta superior (pequeña y legible) */
 .data-card .label {
     font-size: 0.68rem;
     text-transform: uppercase;
@@ -296,51 +292,42 @@ body {
     font-weight: 700;
 }
 
-/* VALOR PRINCIPAL: Estilo Apple Pro tipografía fuerte, blanca, nítida, sin cursiva */
+/* VALOR PRINCIPAL: Blanco brillante absoluto, grande, negrita y SIN CURSIVA */
 .data-card .value {
-    font-size: 1.25rem !important;
+    font-size: 1.2rem !important;
     font-weight: 700 !important;
     color: #ffffff !important;
     font-style: normal !important;
     letter-spacing: -0.01em;
     word-break: break-word;
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-}
-
-/* Estado de carga (gris tenue solo antes de recibir datos) */
-.data-card .value.loading {
-    font-size: 0.95rem !important;
-    color: #86868b !important;
-    font-style: italic !important;
-    font-weight: 400 !important;
-    text-shadow: none !important;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
 }
 
 .description-card {
-    background: rgba(0, 113, 227, 0.08);
+    background: linear-gradient(135deg, rgba(0, 113, 227, 0.08), rgba(0, 113, 227, 0.02));
     border-color: rgba(0, 113, 227, 0.35);
 }
 
 .description-card .value {
-    font-size: 1.1rem !important;
-    font-weight: 600 !important;
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
     line-height: 1.4;
     color: #ffffff !important;
-    text-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
 }
 
 /* ==========================================================================
-   Tarjeta de Estatus Dinámica (Con colores por estado)
+   TARJETA DE ESTATUS DINÁMICA (RESALTADA EN VERDE VIBRANTE)
    ========================================================================== */
 .status-card {
-    background: rgba(0, 113, 227, 0.08);
-    border: 1px solid rgba(0, 113, 227, 0.4);
+    background: rgba(37, 211, 102, 0.1);
+    border: 1px solid rgba(37, 211, 102, 0.45);
     border-radius: 16px;
     padding: 1rem 1.15rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    box-shadow: 0 0 25px rgba(0, 113, 227, 0.2);
+    box-shadow: 0 0 30px rgba(37, 211, 102, 0.2);
     position: relative;
     overflow: hidden;
     transition: all 0.4s ease;
@@ -349,73 +336,66 @@ body {
 .status-indicator-dot {
     width: 10px;
     height: 10px;
-    background-color: #4da3ff;
+    background-color: #25d366;
     border-radius: 50%;
-    box-shadow: 0 0 10px #4da3ff;
+    box-shadow: 0 0 12px #25d366;
     animation: statusPulse 2s infinite ease-in-out;
 }
 
 @keyframes statusPulse {
-    0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 8px #4da3ff; }
-    50% { transform: scale(1.3); opacity: 0.7; box-shadow: 0 0 18px #4da3ff; }
+    0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 10px #25d366; }
+    50% { transform: scale(1.35); opacity: 0.7; box-shadow: 0 0 20px #25d366; }
 }
 
 .status-card .label {
-    color: #4da3ff;
+    color: #25d366;
     font-weight: 700;
     flex-grow: 1;
     font-size: 0.8rem;
     letter-spacing: 0.08em;
 }
 
+/* Texto del estatus resaltado en verde brillante con brillo impactante */
 .status {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: #4da3ff;
-    text-shadow: 0 0 15px rgba(0, 113, 227, 0.7);
+    font-size: 1.15rem !important;
+    font-weight: 800 !important;
+    color: #25d366 !important;
+    font-style: normal !important;
+    text-shadow: 0 0 16px rgba(37, 211, 102, 0.7);
 }
 
-.status.loading {
-    font-size: 0.9rem;
-    color: var(--text-muted) !important;
-    font-style: italic;
-    opacity: 0.7;
-    text-shadow: none;
-    font-weight: 400;
-}
-
-/* Colores Dinámicos de Estatus */
+/* Colores Dinámicos de Estatus (Por si tu JS los conmuta) */
 .status-card.st-finalizado {
-    background: rgba(37, 211, 102, 0.1);
-    border-color: rgba(37, 211, 102, 0.5);
-    box-shadow: 0 0 30px rgba(37, 211, 102, 0.3);
+    background: rgba(37, 211, 102, 0.12);
+    border-color: rgba(37, 211, 102, 0.6);
+    box-shadow: 0 0 35px rgba(37, 211, 102, 0.35);
 }
-.status-card.st-finalizado .status-indicator-dot { background-color: #25d366; box-shadow: 0 0 12px #25d366; }
-.status-card.st-finalizado .label, .status-card.st-finalizado .status { color: #25d366 !important; text-shadow: 0 0 15px rgba(37, 211, 102, 0.7); }
+.status-card.st-finalizado .status-indicator-dot { background-color: #25d366; box-shadow: 0 0 14px #25d366; }
+.status-card.st-finalizado .label, .status-card.st-finalizado .status { color: #25d366 !important; text-shadow: 0 0 18px rgba(37, 211, 102, 0.7); }
 
 .status-card.st-taller {
-    background: rgba(255, 184, 0, 0.1);
-    border-color: rgba(255, 184, 0, 0.5);
-    box-shadow: 0 0 30px rgba(255, 184, 0, 0.3);
+    background: rgba(255, 184, 0, 0.12);
+    border-color: rgba(255, 184, 0, 0.6);
+    box-shadow: 0 0 35px rgba(255, 184, 0, 0.35);
 }
-.status-card.st-taller .status-indicator-dot { background-color: #ffb800; box-shadow: 0 0 12px #ffb800; }
-.status-card.st-taller .label, .status-card.st-taller .status { color: #ffb800 !important; text-shadow: 0 0 15px rgba(255, 184, 0, 0.7); }
+.status-card.st-taller .status-indicator-dot { background-color: #ffb800; box-shadow: 0 0 14px #ffb800; }
+.status-card.st-taller .label, .status-card.st-taller .status { color: #ffb800 !important; text-shadow: 0 0 18px rgba(255, 184, 0, 0.7); }
 
 .status-card.st-espera {
-    background: rgba(0, 113, 227, 0.1);
-    border-color: rgba(0, 113, 227, 0.5);
-    box-shadow: 0 0 30px rgba(0, 113, 227, 0.3);
+    background: rgba(0, 113, 227, 0.12);
+    border-color: rgba(0, 113, 227, 0.6);
+    box-shadow: 0 0 35px rgba(0, 113, 227, 0.35);
 }
-.status-card.st-espera .status-indicator-dot { background-color: #0071e3; box-shadow: 0 0 12px #0071e3; }
-.status-card.st-espera .label, .status-card.st-espera .status { color: #0071e3 !important; text-shadow: 0 0 15px rgba(0, 113, 227, 0.7); }
+.status-card.st-espera .status-indicator-dot { background-color: #0071e3; box-shadow: 0 0 14px #0071e3; }
+.status-card.st-espera .label, .status-card.st-espera .status { color: #0071e3 !important; text-shadow: 0 0 18px rgba(0, 113, 227, 0.7); }
 
 .status-card.st-irtaller {
-    background: rgba(255, 59, 48, 0.1);
-    border-color: rgba(255, 59, 48, 0.5);
-    box-shadow: 0 0 30px rgba(255, 59, 48, 0.3);
+    background: rgba(255, 59, 48, 0.12);
+    border-color: rgba(255, 59, 48, 0.6);
+    box-shadow: 0 0 35px rgba(255, 59, 48, 0.35);
 }
-.status-card.st-irtaller .status-indicator-dot { background-color: #ff3b30; box-shadow: 0 0 12px #ff3b30; }
-.status-card.st-irtaller .label, .status-card.st-irtaller .status { color: #ff3b30 !important; text-shadow: 0 0 15px rgba(255, 59, 48, 0.7); }
+.status-card.st-irtaller .status-indicator-dot { background-color: #ff3b30; box-shadow: 0 0 14px #ff3b30; }
+.status-card.st-irtaller .label, .status-card.st-irtaller .status { color: #ff3b30 !important; text-shadow: 0 0 18px rgba(255, 59, 48, 0.7); }
 
 
 /* ==========================================================================
