@@ -40,7 +40,7 @@
                 </div>
             </div>
 
-            <!-- Columna Derecha: Información del Servicio con Datos Estilo Apple Pro -->
+            <!-- Columna Derecha: Información del Servicio -->
             <div class="right-section">
                 <div class="header-container">
                     <div class="brand-header">
@@ -49,41 +49,41 @@
                     </div>
                 </div>
 
-                <!-- Contenedor de Datos de Alto Impacto Visual -->
+                <!-- Contenedor de Datos (Sin clase loading para forzar visibilidad inmediata) -->
                 <div class="data-grid-cards">
                     <div class="data-card">
                         <span class="label">PLACA BUSCADA</span>
-                        <span id="placa" class="value loading">Leyendo...</span>
+                        <span id="placa" class="value">---</span>
                     </div>
 
                     <div class="data-card">
                         <span class="label">VEHÍCULO</span>
-                        <span id="modelo" class="value loading">Cargando...</span>
+                        <span id="modelo" class="value">---</span>
                     </div>
 
                     <div class="data-grid-row">
                         <div class="data-card">
                             <span class="label">KILOMETRAJE</span>
-                            <span id="kilometraje" class="value loading">---</span>
+                            <span id="kilometraje" class="value">---</span>
                         </div>
                         <div class="data-card">
                             <span class="label">ENTREGA ESTIMADA</span>
-                            <span id="fecha" class="value loading">---</span>
+                            <span id="fecha" class="value">---</span>
                         </div>
                     </div>
 
                     <div class="data-card description-card">
                         <span class="label">DESCRIPCIÓN DEL SERVICIO</span>
-                        <span id="descripcion" class="value loading">---</span>
+                        <span id="descripcion" class="value">---</span>
                     </div>
                 </div>
 
                 <div>
-                    <!-- Tarjeta de Estatus Dinámica -->
+                    <!-- Tarjeta de Estatus Dinámica (Resaltada en verde como pediste) -->
                     <div class="status-card">
                         <div class="status-indicator-dot"></div>
                         <span class="label">ESTATUS ACTUAL</span>
-                        <span id="estatus" class="status loading">Conectando...</span>
+                        <span id="estatus" class="status">Cargando estatus...</span>
                     </div>
                 </div>
             </div>
