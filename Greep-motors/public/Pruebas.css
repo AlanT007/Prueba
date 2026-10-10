@@ -239,26 +239,25 @@ body {
 }
 
 /* ==========================================================================
-   Columna Derecha (Información del Servicio)
+   Columna Derecha (Información del Servicio en Tarjetas Destacadas)
    ========================================================================== */
 .right-section {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 1.5rem;
+    gap: 1.25rem;
 }
 
 .brand-header {
-    margin-bottom: 1.25rem;
     border-bottom: 1px solid var(--card-border);
-    padding-bottom: 1rem;
+    padding-bottom: 0.85rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
 .brand-header h2 {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     background: linear-gradient(135deg, #ffffff, #a1a1a6);
@@ -277,46 +276,84 @@ body {
     box-shadow: 0 0 12px rgba(0, 113, 227, 0.6);
 }
 
-.info-group {
+/* Tarjetas de Datos Individuales */
+.data-grid-cards {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.65rem 0.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    border-radius: 8px;
-    transition: all 0.25s ease;
+    flex-direction: column;
+    gap: 0.65rem;
 }
 
-.info-group:hover {
+.data-grid-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+}
+
+.data-card {
     background: rgba(255, 255, 255, 0.025);
-    transform: translateX(4px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 0.75rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    transition: all 0.3s ease;
 }
 
-.label {
-    font-size: 0.85rem;
+.data-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(0, 113, 227, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+.data-card .label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
     color: var(--text-muted);
+    font-weight: 600;
+}
+
+.data-card .value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    word-break: break-word;
+}
+
+.data-card .value.loading {
+    font-size: 0.85rem;
+    color: var(--text-muted) !important;
+    font-style: italic;
     font-weight: 400;
 }
 
-.value {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-primary);
+.description-card {
+    background: rgba(0, 113, 227, 0.025);
+    border-color: rgba(0, 113, 227, 0.15);
 }
 
-/* Tarjeta de Estatus Intermitente con Neón */
+.description-card .value {
+    font-size: 0.9rem;
+    line-height: 1.35;
+}
+
+/* ==========================================================================
+   Tarjeta de Estatus Dinámica (Con colores por estado)
+   ========================================================================== */
 .status-card {
     background: rgba(0, 113, 227, 0.07);
     border: 1px solid rgba(0, 113, 227, 0.35);
-    border-radius: 18px;
-    padding: 1.15rem;
+    border-radius: 16px;
+    padding: 1rem 1.15rem;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    margin-top: 1rem;
     box-shadow: 0 0 25px rgba(0, 113, 227, 0.15);
     position: relative;
     overflow: hidden;
+    transition: all 0.4s ease;
 }
 
 .status-indicator-dot {
@@ -337,6 +374,7 @@ body {
     color: #4da3ff;
     font-weight: 600;
     flex-grow: 1;
+    font-size: 0.85rem;
 }
 
 .status {
@@ -346,11 +384,46 @@ body {
     text-shadow: 0 0 12px rgba(0, 113, 227, 0.6);
 }
 
-.loading {
+.status.loading {
     color: var(--text-muted) !important;
     font-style: italic;
     opacity: 0.7;
+    text-shadow: none;
 }
+
+/* Colores Dinámicos de Estatus */
+.status-card.st-finalizado {
+    background: rgba(37, 211, 102, 0.08);
+    border-color: rgba(37, 211, 102, 0.4);
+    box-shadow: 0 0 25px rgba(37, 211, 102, 0.25);
+}
+.status-card.st-finalizado .status-indicator-dot { background-color: #25d366; box-shadow: 0 0 12px #25d366; }
+.status-card.st-finalizado .label, .status-card.st-finalizado .status { color: #25d366 !important; text-shadow: 0 0 12px rgba(37, 211, 102, 0.6); }
+
+.status-card.st-taller {
+    background: rgba(255, 184, 0, 0.08);
+    border-color: rgba(255, 184, 0, 0.4);
+    box-shadow: 0 0 25px rgba(255, 184, 0, 0.25);
+}
+.status-card.st-taller .status-indicator-dot { background-color: #ffb800; box-shadow: 0 0 12px #ffb800; }
+.status-card.st-taller .label, .status-card.st-taller .status { color: #ffb800 !important; text-shadow: 0 0 12px rgba(255, 184, 0, 0.6); }
+
+.status-card.st-espera {
+    background: rgba(0, 113, 227, 0.08);
+    border-color: rgba(0, 113, 227, 0.4);
+    box-shadow: 0 0 25px rgba(0, 113, 227, 0.25);
+}
+.status-card.st-espera .status-indicator-dot { background-color: #0071e3; box-shadow: 0 0 12px #0071e3; }
+.status-card.st-espera .label, .status-card.st-espera .status { color: #0071e3 !important; text-shadow: 0 0 12px rgba(0, 113, 227, 0.6); }
+
+.status-card.st-irtaller {
+    background: rgba(255, 59, 48, 0.08);
+    border-color: rgba(255, 59, 48, 0.4);
+    box-shadow: 0 0 25px rgba(255, 59, 48, 0.25);
+}
+.status-card.st-irtaller .status-indicator-dot { background-color: #ff3b30; box-shadow: 0 0 12px #ff3b30; }
+.status-card.st-irtaller .label, .status-card.st-irtaller .status { color: #ff3b30 !important; text-shadow: 0 0 12px rgba(255, 59, 48, 0.6); }
+
 
 /* ==========================================================================
    Barra Inferior (WhatsApp y Bolitas de Redes Sociales)
@@ -361,7 +434,6 @@ body {
     gap: 1.25rem;
 }
 
-/* Botón WhatsApp */
 .whatsapp-support {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -423,7 +495,7 @@ body {
     transform: translateX(5px);
 }
 
-/* Redes Sociales en forma de "Bolitas" (Circular Badges con colores vivos y efectos 3D) */
+/* Redes Sociales en forma de Bolitas Coloridas */
 .social-icons {
     display: flex;
     justify-content: center;
@@ -450,7 +522,6 @@ body {
     transition: transform 0.3s ease;
 }
 
-/* Efectos de luz y color individuales para cada bolita */
 .social-btn.tiktok:hover {
     background-color: var(--tiktok-color);
     color: #ffffff;
