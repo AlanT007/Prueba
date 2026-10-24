@@ -82,10 +82,10 @@ if (!placaBusqueda) {
                     else if (fotoValor.startsWith('http://') || fotoValor.startsWith('https://')) {
                         rutaFinal = fotoValor;
                     } 
-                    // CASO C: Imagen guardada en servidor local (saliendo de la carpeta public con ../)
+                    // CASO C: Imagen guardada en servidor local (dentro de public/Imagenes)
                     else {
                         const nombreArchivo = fotoValor.split('/').pop().split('\\').pop();
-                        rutaFinal = `../Imágenes/${nombreArchivo}`;
+                        rutaFinal = `./Imagenes/${nombreArchivo}`;
                     }
 
                     // Insertar imagen
@@ -94,10 +94,10 @@ if (!placaBusqueda) {
                     imgElement.src = rutaFinal;
                     imgElement.alt = "Foto del Vehículo";
 
-                    // Fallback de seguridad por si busca en minúsculas saliendo de public
+                    // Fallback de seguridad por si busca en minúsculas
                     imgElement.onerror = function() {
-                        if (this.src.includes('../Imágenes/')) {
-                            this.src = this.src.replace('../Imágenes/', '../imagenes/');
+                        if (this.src.includes('./Imagenes/')) {
+                            this.src = this.src.replace('./Imagenes/', './imagenes/');
                             return;
                         }
 
