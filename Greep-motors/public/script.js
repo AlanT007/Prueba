@@ -85,7 +85,7 @@ if (!placaBusqueda) {
                     // CASO C: Imagen guardada en servidor local
                     else {
                         const nombreArchivo = fotoValor.split('/').pop().split('\\').pop();
-                        rutaFinal = `./images/${nombreArchivo}`;
+                        rutaFinal = `./Imágenes/${nombreArchivo}`;
                     }
 
                     // Insertar imagen
@@ -94,14 +94,10 @@ if (!placaBusqueda) {
                     imgElement.src = rutaFinal;
                     imgElement.alt = "Foto del Vehículo";
 
-                    // Fallback automático inteligente para evitar errores de rutas y mayúsculas en Netlify
+                    // Fallback de seguridad por si acaso busca en minúsculas
                     imgElement.onerror = function() {
-                        if (this.src.includes('/images/')) {
-                            this.src = this.src.replace('/images/', '/imagenes/');
-                            return;
-                        }
-                        if (this.src.includes('/imagenes/')) {
-                            this.src = this.src.replace('/imagenes/', '/Imágenes/');
+                        if (this.src.includes('/Imágenes/')) {
+                            this.src = this.src.replace('/Imágenes/', '/imagenes/');
                             return;
                         }
 
