@@ -10,7 +10,7 @@ const SHEETDB_API_URL = process.env.SHEETDB_API_URL;
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Ruta protegida en el backend para consultar el vehículo por placa
-app.apiEndpoint = app.get('/api/vehiculo/:placa', async (req, res) => {
+app.get('/api/vehiculo/:placa', async (req, res) => {
     const placaBusqueda = req.params.placa;
 
     if (!placaBusqueda) {
@@ -18,7 +18,8 @@ app.apiEndpoint = app.get('/api/vehiculo/:placa', async (req, res) => {
     }
 
     try {
-        const response = await fetch(`${SHEETDB_API_URL}/search?Placas=${encodeURIComponent(placaBusqueda)}`);
+        // CORREGIDO: Se usa 'Placas_Veiculo' para coincidir con la columna exacta del Excel/Google Sheets
+        const response = await fetch(`${SHEETDB_API_URL}/search?Placas_Veiculo=${encodeURIComponent(placaBusqueda)}`);
         const data = await response.json();
         
         // Retornamos los datos limpios al frontend sin exponer la URL de SheetDB
