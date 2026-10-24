@@ -10,6 +10,7 @@ const spanEstatus = document.getElementById('estatus');
 const imgContainer = document.getElementById('image-wrapper-container');
 const imgText = document.getElementById('img-text');
 const qrImg = document.getElementById('qr-img');
+const waSupportBtn = document.getElementById('wa-support-btn');
 
 // 1. Generar Código QR
 try {
@@ -36,6 +37,12 @@ if (!placaBusqueda) {
         imgText.textContent = "Sin placa en URL";
         imgText.classList.remove('loading');
     }
+    
+    // WhatsApp por defecto sin placa
+    if (waSupportBtn) {
+        const mensajeDefault = "Hola, necesito información sobre el estatus de mi vehículo.";
+        waSupportBtn.href = `https://wa.me/525547667757?text=${encodeURIComponent(mensajeDefault)}`;
+    }
 } else {
     const placaLimpia = placaBusqueda.trim().toUpperCase();
     if (spanPlaca) spanPlaca.textContent = placaLimpia;
@@ -49,13 +56,22 @@ if (!placaBusqueda) {
             if (data && Array.isArray(data) && data.length > 0) {
                 const auto = data[0];
 
-                if (spanModelo) spanModelo.textContent = auto.Modelo_Veiculo || "No registrado";
+                const modeloAuto = auto.Modelo_Veiculo || "No registrado";
+                const estatusAuto = auto.Estatus || "Sin estatus";
+
+                if (spanModelo) spanModelo.textContent = modeloAuto;
                 if (spanKilometraje) spanKilometraje.textContent = auto.Kilometraje_actual ? `${auto.Kilometraje_actual} km` : "No registrado";
                 if (spanFecha) spanFecha.textContent = auto.Fecha_entrega || "Por definir";
                 if (spanDescripcion) spanDescripcion.textContent = auto.Descripcion_Servicio || "Sin observaciones";
                 if (spanEstatus) {
-                    spanEstatus.textContent = auto.Estatus || "Sin estatus";
+                    spanEstatus.textContent = estatusAuto;
                     spanEstatus.classList.remove('loading');
+                }
+
+                // --- ACTUALIZAR ENLACE DE WHATSAPP DINÁMICAMENTE CON LA PLACA Y DETALLES ---
+                if (waSupportBtn) {
+                    const mensajePersonalizado = `Hola, necesito información sobre el estatus de mi vehículo con placa *${placaLimpia}* (${modeloAuto}). Estatus actual: *${estatusAuto}*.`;
+                    waSupportBtn.href = `https://wa.me/525547667757?text=${encodeURIComponent(mensajePersonalizado)}`;
                 }
 
                 // --- MANEJO SEGURO DE LA FOTO ---
@@ -82,10 +98,10 @@ if (!placaBusqueda) {
                     else if (fotoValor.startsWith('http://') || fotoValor.startsWith('https://')) {
                         rutaFinal = fotoValor;
                     } 
-                    // CASO C: Imagen guardada en servidor local (dentro de public/Imagenes)
+                    // CASO C: Imagen guardada en servidor local
                     else {
                         const nombreArchivo = fotoValor.split('/').pop().split('\\').pop();
-                        rutaFinal = `./Imagenes/${nombreArchivo}`;
+                        rutaFinal = `/Imagenes/${nombreArchivo}`;
                     }
 
                     // Insertar imagen
@@ -94,10 +110,9 @@ if (!placaBusqueda) {
                     imgElement.src = rutaFinal;
                     imgElement.alt = "Foto del Vehículo";
 
-                    // Fallback de seguridad por si busca en minúsculas
                     imgElement.onerror = function() {
-                        if (this.src.includes('./Imagenes/')) {
-                            this.src = this.src.replace('./Imagenes/', './imagenes/');
+                        if (this.src.includes('/Imagenes/')) {
+                            this.src = this.src.replace('/Imagenes/', '/imagenes/');
                             return;
                         }
 
