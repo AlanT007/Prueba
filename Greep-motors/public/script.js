@@ -84,9 +84,8 @@ if (!placaBusqueda) {
                     } 
                     // CASO C: Imagen guardada en servidor local
                     else {
-                        // Extrae ÚNICAMENTE el nombre del archivo (ej. "Imagen1.jpg" o "Imagen2.jpg"), eliminando carpetas como "Imagenes/" o "imagenes/"
                         const nombreArchivo = fotoValor.split('/').pop().split('\\').pop();
-                        rutaFinal = `./imagen/${nombreArchivo}`;
+                        rutaFinal = `./images/${nombreArchivo}`;
                     }
 
                     // Insertar imagen
@@ -95,10 +94,14 @@ if (!placaBusqueda) {
                     imgElement.src = rutaFinal;
                     imgElement.alt = "Foto del Vehículo";
 
-                    // Fallback automático: si falla la ruta /imagen/, reintenta automáticamente en /imagenes/
+                    // Fallback automático inteligente para evitar errores de rutas y mayúsculas en Netlify
                     imgElement.onerror = function() {
-                        if (this.src.includes('/imagen/')) {
-                            this.src = this.src.replace('/imagen/', '/imagenes/');
+                        if (this.src.includes('/images/')) {
+                            this.src = this.src.replace('/images/', '/imagenes/');
+                            return;
+                        }
+                        if (this.src.includes('/imagenes/')) {
+                            this.src = this.src.replace('/imagenes/', '/Imágenes/');
                             return;
                         }
 
