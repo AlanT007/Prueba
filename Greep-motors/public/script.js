@@ -99,7 +99,7 @@ function processImageUrl(rawUrl, placaLimpia) {
         return fotoValor;
     } else {
         const nombreArchivo = fotoValor.split('/').pop().split('\\').pop();
-        return `./imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
+        return `./Imágenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
     }
 }
 
@@ -133,14 +133,30 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
     }
 }
 
-// Renderizador dinámico optimizado basado en secuencia limpia (1.jpg, 2.jpg...)
+// Renderizador dinámico adaptado a los nombres reales de tus carpetas y fotos
 function renderCarouselAutomatico(placaLimpia) {
     carouselTrack.innerHTML = '';
     dotsContainer.innerHTML = '';
 
-    let candidatosArchivos = [];
-    // Verificamos del 1 al 10 en extensiones comunes (.jpg, .jpeg, .png, .JPG)
-    for (let i = 1; i <= 10; i++) {
+    // Lista de candidatos incluyendo tus nombres reales (IMG_2460.JPG, etc.) y formato numérico
+    let candidatosArchivos = [
+        'IMG_2460.JPG',
+        'IMG_2476.JPG',
+        'IMG_2482.JPG',
+        'IMG_2460.jpg',
+        'IMG_2476.jpg',
+        'IMG_2482.jpg',
+        'Imagen3.jpeg',
+        'Imagen4.jpeg',
+        'Imagen_Carro1.jpg'
+    ];
+
+    for (let i = 2400; i <= 2550; i++) {
+        candidatosArchivos.push(`IMG_${i}.JPG`);
+        candidatosArchivos.push(`IMG_${i}.jpg`);
+    }
+
+    for (let i = 1; i <= 15; i++) {
         candidatosArchivos.push(`${i}.jpg`);
         candidatosArchivos.push(`${i}.JPG`);
         candidatosArchivos.push(`${i}.jpeg`);
@@ -151,8 +167,8 @@ function renderCarouselAutomatico(placaLimpia) {
     let verificacionesPendientes = candidatosArchivos.length;
 
     candidatosArchivos.forEach((nombreArchivo, indexIdentificador) => {
-        // Apuntando a la carpeta en minúsculas ./imagenes/
-        const rutaSugerida = `./imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
+        // Coincide exactamente con la carpeta "Imágenes" que tienes en GitHub
+        const rutaSugerida = `./Imágenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
 
         const imgTest = new Image();
         imgTest.src = rutaSugerida;
