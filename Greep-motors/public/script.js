@@ -126,8 +126,7 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
             this.remove();
             imgText.style.display = "block";
             imgText.style.fontSize = "0.75rem";
-            const soloNombre = fotoValor.split('/').pop().split('\\').pop();
-            imgText.textContent = `No se encontró la imagen: "${soloNombre}"`;
+            imgText.textContent = "Sin foto principal registrada";
             imgText.classList.remove('loading');
         };
 
@@ -139,28 +138,26 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
     }
 }
 
-// Renderizar carrusel automático integrando todos tus nombres reales actuales
+// Renderizar carrusel dinámico por carpeta de placa
 function renderCarouselAutomatico(placaLimpia) {
     carouselTrack.innerHTML = '';
     dotsContainer.innerHTML = '';
 
-    // Lista exacta de los archivos que ya tienes en tu GitHub
+    // Generador dinámico de candidatos genéricos comunes y numeraciones (1 al 15)
     let candidatosArchivos = [
-        '113534.jpeg',
-        '153729.jpeg',
         'Imagen_Carro1.jpg',
-        'Imagen_Carro1.jpg.jpeg',
-        'Captura de pantalla 2026-11-02 153734.png',
-        'Captura de pantalla 2026-11-02 153926.png',
-        'Captura de pantalla 2026-11-02 154244.png',
-        'Captura de pantalla 2026-11-05 135159.png'
+        'Imagen1.jpg',
+        'Imagen2.jpg',
+        'Foto1.jpg',
+        'Foto2.jpg'
     ];
 
-    // Añadir también numeraciones estándar por si agregas más adelante
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 15; i++) {
         candidatosArchivos.push(`${i}.jpg`);
         candidatosArchivos.push(`${i}.jpeg`);
         candidatosArchivos.push(`${i}.png`);
+        candidatosArchivos.push(`avance_${i}.jpg`);
+        candidatosArchivos.push(`avance (${i}).jpg`);
     }
 
     let imagenesValidasEncontradas = [];
@@ -191,15 +188,13 @@ function renderCarouselAutomatico(placaLimpia) {
             imagenesValidasEncontradas.sort((a, b) => a.id - b.id);
 
             if (imagenesValidasEncontradas.length === 0) {
-                carouselText.style.display = "block";
-                carouselText.textContent = "Sin pruebas de avance registradas";
-                carouselText.classList.remove('loading');
+                // Si no hay imágenes en la carpeta, mostramos texto amigable en lugar de pantalla en negro
+                carouselTrack.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #86868b; font-size: 0.9rem; font-family: var(--font-family);">Aún no hay fotos de avance para esta placa</div>`;
                 if (prevBtn) prevBtn.style.display = 'none';
                 if (nextBtn) nextBtn.style.display = 'none';
                 return;
             }
 
-            carouselText.style.display = "none";
             totalSlides = imagenesValidasEncontradas.length;
             currentIndex = 0;
 
@@ -223,7 +218,7 @@ function renderCarouselAutomatico(placaLimpia) {
                 dotsContainer.appendChild(dot);
             });
 
-            // Las flechas aparecen SOLAMENTE si hay más de 1 imagen en total
+            // Mostrar u ocultar flechas dependiendo de si hay más de 1 foto
             if (totalSlides > 1) {
                 if (prevBtn) prevBtn.style.display = 'flex';
                 if (nextBtn) nextBtn.style.display = 'flex';
@@ -252,9 +247,8 @@ if (!placaBusqueda) {
         imgText.textContent = "Sin placa en URL";
         imgText.classList.remove('loading');
     }
-    if (carouselText) {
-        carouselText.textContent = "Sin placa en URL";
-        carouselText.classList.remove('loading');
+    if (carouselTrack) {
+        carouselTrack.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #86868b; font-size: 0.9rem;">Falta código de placa en la URL</div>`;
     }
 } else {
     const placaLimpia = placaBusqueda.trim().toUpperCase();
@@ -282,7 +276,7 @@ if (!placaBusqueda) {
                 const fotoPrincipal = auto.Foto || auto.foto || auto.Imagen || auto.URL || auto.Foto_Veiculo || "";
                 renderMainPhoto(fotoPrincipal, placaLimpia);
 
-                // Carrusel automático (abajo) escaneando la carpeta de la placa
+                // Carrusel automático escaneando la carpeta correspondiente a la placa
                 renderCarouselAutomatico(placaLimpia);
 
             } else {
@@ -296,10 +290,8 @@ if (!placaBusqueda) {
                     imgText.textContent = "Vehículo no encontrado";
                     imgText.classList.remove('loading');
                 }
-                if (carouselText) {
-                    carouselText.style.display = "block";
-                    carouselText.textContent = "Vehículo no encontrado";
-                    carouselText.classList.remove('loading');
+                if (carouselTrack) {
+                    carouselTrack.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #86868b; font-size: 0.9rem;">Vehículo no encontrado en el sistema</div>`;
                 }
             }
         })
@@ -316,11 +308,8 @@ if (!placaBusqueda) {
                 imgText.textContent = `Error: ${error.message}`;
                 imgText.classList.remove('loading');
             }
-            if (carouselText) {
-                carouselText.style.display = "block";
-                carouselText.style.fontSize = "0.75rem";
-                carouselText.textContent = `Error: ${error.message}`;
-                carouselText.classList.remove('loading');
+            if (carouselTrack) {
+                carouselTrack.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #86868b; font-size: 0.9rem;">Error de conexión con el servidor</div>`;
             }
         });
 }
