@@ -140,7 +140,7 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
 }
 
 // =========================================================================
-// CARRUSEL DINÁMICO INFERIOR (Apunta directo a ./Imagenes/[placa]/)
+// CARRUSEL DINÁMICO INFERIOR (Apunta a ./Imagenes/[placa]/ con soporte flexible)
 // =========================================================================
 function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
     carouselTrack.innerHTML = '';
@@ -154,6 +154,8 @@ function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
             listaFotos = String(fotosAvanceRaw).split(',').map(f => f.trim()).filter(f => f !== "");
         }
     }
+
+    console.log("Fotos detectadas para el carrusel:", listaFotos);
 
     if (listaFotos.length === 0) {
         if (carouselText) {
@@ -177,13 +179,16 @@ function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
         slide.className = 'carousel-slide';
 
         const img = document.createElement('img');
-        // Ruta directa basada en tu estructura: ./Imagenes/[placa]/[nombre_archivo]
+        // Ruta exacta respetando la carpeta Imagenes con I mayúscula: ./Imagenes/[placa]/[nombre_archivo]
         img.src = `./Imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
         img.alt = `Prueba de avance ${idx + 1}`;
 
-        // Auto-corrector por si en el Sheet pusiste .jpg y el archivo es .jpeg o viceversa
+        console.log(`Cargando imagen carrusel [${idx}]:`, img.src);
+
+        // Auto-corrector por si la extensión varía entre .jpg, .jpeg, etc.
         let intentoAlternativo = 0;
         img.onerror = function() {
+            console.warn(`Falló la carga de: ${this.src}, intentando variante...`);
             if (intentoAlternativo === 0) {
                 intentoAlternativo = 1;
                 if (this.src.endsWith('.jpg')) {
@@ -252,6 +257,7 @@ if (!placaBusqueda) {
             return response.json();
         })
         .then(data => {
+            console.log("Datos recibidos del servidor/SheetDB:", data);
             if (data && Array.isArray(data) && data.length > 0) {
                 const auto = data[0];
 
@@ -268,8 +274,19 @@ if (!placaBusqueda) {
                 const fotoPrincipal = auto.Foto || auto.foto || auto.Imagen || auto.URL || auto.Foto_Veiculo || "";
                 renderMainPhoto(fotoPrincipal, placaLimpia);
 
-                // 2. Fotos del carrusel de abajo (leídas desde Google Sheets y buscando en ./Imagenes/[placa]/)
-                const fotosAvanceDelSheet = auto.Fotos_Avance || auto.Avances || auto.Fotos || "";
+                // 2. Extractor flexible de fotos para el carrusel (busca en cualquier variante de nombre de columna)
+                let fotosAvanceDelSheet = auto.Fotos_Avance || auto.fotos_avance || auto.Avances || auto.avances || auto.Fotos || auto.fotos || "";
+                
+                // Si no encuentra ninguna de las columnas anteriores, busca en todas las propiedades del objeto SheetDB
+                if (!fotosAvanceDelSheet) {
+                    for (let key in auto) {
+                        if (typeof auto[key] === 'string' && (auto[key].includes('.jpg') || auto[key].includes('.jpeg') || auto[key].includes('.png'))) {
+                            fotosAvanceDelSheet = auto[key];
+                            break;
+                        }
+                    }
+                }
+
                 renderCarouselDesdeSheet(fotosAvanceDelSheet, placaLimpia);
 
             } else {
