@@ -12,7 +12,6 @@ const imgText = document.getElementById('img-text');
 
 // Elementos del Carrusel Inferior
 const carouselTrack = document.getElementById('carousel-track');
-const carouselText = document.getElementById('carousel-text');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 const dotsContainer = document.getElementById('carousel-dots');
@@ -100,7 +99,7 @@ function processImageUrl(rawUrl, placaLimpia) {
         return fotoValor;
     } else {
         const nombreArchivo = fotoValor.split('/').pop().split('\\').pop();
-        return `./Imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
+        return `./imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
     }
 }
 
@@ -119,10 +118,6 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
         imgElement.alt = "Foto del Vehículo";
 
         imgElement.onerror = function() {
-            if (this.src.includes(`/${placaLimpia}/`)) {
-                this.src = this.src.replace(`/${placaLimpia}/`, '/');
-                return;
-            }
             this.remove();
             imgText.style.display = "block";
             imgText.style.fontSize = "0.75rem";
@@ -138,44 +133,26 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
     }
 }
 
-// Renderizar carrusel dinámico integrado con patrones IMG_XXXX y numéricos
+// Renderizador dinámico optimizado basado en secuencia limpia (1.jpg, 2.jpg...)
 function renderCarouselAutomatico(placaLimpia) {
     carouselTrack.innerHTML = '';
     dotsContainer.innerHTML = '';
 
-    let candidatosArchivos = [
-        // Archivos específicos que tienes en NMH-82-94
-        'IMG_2460.JPG',
-        'IMG_2476.JPG',
-        'IMG_2482.JPG',
-        'IMG_2460.jpg',
-        'IMG_2476.jpg',
-        'IMG_2482.jpg',
-        'Imagen3.jpeg',
-        'Imagen4.jpeg',
-        'Imagen_Carro1.jpg'
-    ];
-
-    // Rango amplio de secuencias numéricas y de cámaras (IMG_XXXX)
-    for (let i = 2400; i <= 2550; i++) {
-        candidatosArchivos.push(`IMG_${i}.JPG`);
-        candidatosArchivos.push(`IMG_${i}.jpg`);
-        candidatosArchivos.push(`IMG_${i}.jpeg`);
-    }
-
-    for (let i = 1; i <= 20; i++) {
+    let candidatosArchivos = [];
+    // Verificamos del 1 al 10 en extensiones comunes (.jpg, .jpeg, .png, .JPG)
+    for (let i = 1; i <= 10; i++) {
         candidatosArchivos.push(`${i}.jpg`);
         candidatosArchivos.push(`${i}.JPG`);
         candidatosArchivos.push(`${i}.jpeg`);
         candidatosArchivos.push(`${i}.png`);
-        candidatosArchivos.push(`avance_${i}.jpg`);
     }
 
     let imagenesValidasEncontradas = [];
     let verificacionesPendientes = candidatosArchivos.length;
 
     candidatosArchivos.forEach((nombreArchivo, indexIdentificador) => {
-        const rutaSugerida = `./Imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
+        // Apuntando a la carpeta en minúsculas ./imagenes/
+        const rutaSugerida = `./imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
 
         const imgTest = new Image();
         imgTest.src = rutaSugerida;
@@ -228,7 +205,6 @@ function renderCarouselAutomatico(placaLimpia) {
                 dotsContainer.appendChild(dot);
             });
 
-            // Mostrar u ocultar flechas según la cantidad de imágenes
             if (totalSlides > 1) {
                 if (prevBtn) prevBtn.style.display = 'flex';
                 if (nextBtn) nextBtn.style.display = 'flex';
@@ -252,10 +228,6 @@ if (!placaBusqueda) {
     if (spanEstatus) {
         spanEstatus.textContent = "Falta código de placa";
         spanEstatus.classList.remove('loading');
-    }
-    if (imgText) {
-        imgText.textContent = "Sin placa en URL";
-        imgText.classList.remove('loading');
     }
     if (carouselTrack) {
         carouselTrack.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #86868b; font-size: 0.9rem;">Falta código de placa en la URL</div>`;
@@ -282,11 +254,8 @@ if (!placaBusqueda) {
                     spanEstatus.classList.remove('loading');
                 }
 
-                // Foto principal normal (arriba)
                 const fotoPrincipal = auto.Foto || auto.foto || auto.Imagen || auto.URL || auto.Foto_Veiculo || "";
                 renderMainPhoto(fotoPrincipal, placaLimpia);
-
-                // Carrusel automático escaneando la carpeta correspondiente a la placa
                 renderCarouselAutomatico(placaLimpia);
 
             } else {
@@ -294,11 +263,6 @@ if (!placaBusqueda) {
                 if (spanEstatus) {
                     spanEstatus.textContent = "Vehículo no registrado";
                     spanEstatus.classList.remove('loading');
-                }
-                if (imgText) {
-                    imgText.style.display = "block";
-                    imgText.textContent = "Vehículo no encontrado";
-                    imgText.classList.remove('loading');
                 }
                 if (carouselTrack) {
                     carouselTrack.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #86868b; font-size: 0.9rem;">Vehículo no encontrado en el sistema</div>`;
@@ -311,12 +275,6 @@ if (!placaBusqueda) {
             if (spanEstatus) {
                 spanEstatus.textContent = "Error de conexión";
                 spanEstatus.classList.remove('loading');
-            }
-            if (imgText) {
-                imgText.style.display = "block";
-                imgText.style.fontSize = "0.75rem";
-                imgText.textContent = `Error: ${error.message}`;
-                imgText.classList.remove('loading');
             }
             if (carouselTrack) {
                 carouselTrack.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #86868b; font-size: 0.9rem;">Error de conexión con el servidor</div>`;
