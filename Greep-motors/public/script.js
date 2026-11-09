@@ -140,95 +140,67 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
 }
 
 // =========================================================================
-// CARRUSEL DINÁMICO INFERIOR (Ruta relativa limpia y segura)
+// CARRUSEL DINÁMICO AUTOMÁTICO (Escanea la carpeta de la placa mediante el servidor)
 // =========================================================================
-function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
+function renderCarouselServidor(placaLimpia) {
     carouselTrack.innerHTML = '';
     dotsContainer.innerHTML = '';
 
-    let listaFotos = [];
-    if (fotosAvanceRaw) {
-        if (Array.isArray(fotosAvanceRaw)) {
-            listaFotos = fotosAvanceRaw;
-        } else {
-            listaFotos = String(fotosAvanceRaw).split(',').map(f => f.trim()).filter(f => f !== "");
-        }
-    }
-
-    if (listaFotos.length === 0) {
-        if (carouselText) {
-            carouselText.style.display = "block";
-            carouselText.textContent = "Aún no hay fotos de avance para esta placa";
-            carouselText.classList.remove('loading');
-        } else {
-            carouselTrack.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #86868b; font-size: 0.9rem; font-family: var(--font-family);">Aún no hay fotos de avance para esta placa</div>`;
-        }
-        if (prevBtn) prevBtn.style.display = 'none';
-        if (nextBtn) nextBtn.style.display = 'none';
-        return;
-    }
-
-    if (carouselText) carouselText.style.display = "none";
-    totalSlides = listaFotos.length;
-    currentIndex = 0;
-
-    listaFotos.forEach((nombreArchivoRaw, idx) => {
-        const nombreLimpio = String(nombreArchivoRaw).split('/').pop().split('\\').pop().trim();
-        if (!nombreLimpio) return;
-
-        const slide = document.createElement('div');
-        slide.className = 'carousel-slide';
-
-        const img = document.createElement('img');
-        // Usamos ruta relativa exacta `./Imagenes/[placa]/[nombre]`
-        img.src = `./Imagenes/${placaLimpia}/${encodeURIComponent(nombreLimpio)}`;
-        img.alt = `Prueba de avance ${idx + 1}`;
-
-        // Auto-corrector de extensión y aviso visual si no se encuentra
-        let intentoAlternativo = 0;
-        img.onerror = function() {
-            if (intentoAlternativo === 0) {
-                intentoAlternativo = 1;
-                if (this.src.endsWith('.jpg')) {
-                    this.src = this.src.replace(/\.jpg$/i, '.jpeg');
-                    return;
-                } else if (this.src.endsWith('.jpeg')) {
-                    this.src = this.src.replace(/\.jpeg$/i, '.jpg');
-                    return;
-                } else if (this.src.endsWith('.JPG')) {
-                    this.src = this.src.replace(/\.JPG$/, '.JPEG');
-                    return;
+    // Consulta a la función de Netlify que lee físicamente la carpeta de la placa
+    fetch(`/.netlify/functions/listar-fotos?placa=${encodeURIComponent(placaLimpia)}`)
+        .then(res => res.json())
+        .then(listaFotos => {
+            if (!listaFotos || !Array.isArray(listaFotos) || listaFotos.length === 0) {
+                if (carouselText) {
+                    carouselText.style.display = "block";
+                    carouselText.textContent = "Aún no hay fotos de avance para esta placa";
+                    carouselText.classList.remove('loading');
+                } else {
+                    carouselTrack.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #86868b; font-size: 0.9rem; font-family: var(--font-family);">Aún no hay fotos de avance para esta placa</div>`;
                 }
+                if (prevBtn) prevBtn.style.display = 'none';
+                if (nextBtn) nextBtn.style.display = 'none';
+                return;
             }
-            // Si falla definitivamente, mostramos un aviso limpio en vez de dejar la pantalla en negro
-            this.style.display = 'none';
-            const errorMsg = document.createElement('div');
-            errorMsg.style.cssText = "display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #86868b; font-size: 0.85rem; padding: 20px; text-align: center;";
-            errorMsg.textContent = `No se encontró el archivo: "${nombreLimpio}" en la carpeta Imagenes/${placaLimpia}/`;
-            slide.appendChild(errorMsg);
-        };
 
-        slide.appendChild(img);
-        carouselTrack.appendChild(slide);
+            if (carouselText) carouselText.style.display = "none";
+            totalSlides = listaFotos.length;
+            currentIndex = 0;
 
-        const dot = document.createElement('span');
-        dot.className = `dot ${idx === 0 ? 'active' : ''}`;
-        dot.addEventListener('click', () => {
-            currentIndex = idx;
+            listaFotos.forEach((nombreArchivo, idx) => {
+                const slide = document.createElement('div');
+                slide.className = 'carousel-slide';
+
+                const img = document.createElement('img');
+                // Carga directa de la foto encontrada en el servidor
+                img.src = `./Imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
+                img.alt = `Prueba de avance ${idx + 1}`;
+
+                slide.appendChild(img);
+                carouselTrack.appendChild(slide);
+
+                const dot = document.createElement('span');
+                dot.className = `dot ${idx === 0 ? 'active' : ''}`;
+                dot.addEventListener('click', () => {
+                    currentIndex = idx;
+                    updateCarousel();
+                });
+                dotsContainer.appendChild(dot);
+            });
+
+            if (totalSlides > 1) {
+                if (prevBtn) prevBtn.style.display = 'flex';
+                if (nextBtn) nextBtn.style.display = 'flex';
+            } else {
+                if (prevBtn) prevBtn.style.display = 'none';
+                if (nextBtn) nextBtn.style.display = 'none';
+            }
+
             updateCarousel();
+        })
+        .catch(err => {
+            console.error("Error al cargar fotos del servidor:", err);
         });
-        dotsContainer.appendChild(dot);
-    });
-
-    if (totalSlides > 1) {
-        if (prevBtn) prevBtn.style.display = 'flex';
-        if (nextBtn) nextBtn.style.display = 'flex';
-    } else {
-        if (prevBtn) prevBtn.style.display = 'none';
-        if (nextBtn) nextBtn.style.display = 'none';
-    }
-
-    updateCarousel();
 }
 
 // 3. Validar Parámetro de Placa y Cargar Datos
@@ -272,23 +244,12 @@ if (!placaBusqueda) {
                     spanEstatus.classList.remove('loading');
                 }
 
-                // 1. Foto principal de arriba (extraída de Google Sheets - INTACTA)
+                // 1. Foto principal de arriba (extraída de Google Sheets - 100% INTACTA)
                 const fotoPrincipal = auto.Foto || auto.foto || auto.Imagen || auto.URL || auto.Foto_Veiculo || "";
                 renderMainPhoto(fotoPrincipal, placaLimpia);
 
-                // 2. Fotos del carrusel de abajo (leídas desde Google Sheets)
-                let fotosAvanceDelSheet = auto.Fotos_Avance || auto.fotos_avance || auto.Avances || auto.avances || auto.Fotos || auto.fotos || "";
-                
-                if (!fotosAvanceDelSheet) {
-                    for (let key in auto) {
-                        if (typeof auto[key] === 'string' && (auto[key].includes('.jpg') || auto[key].includes('.jpeg') || auto[key].includes('.png'))) {
-                            fotosAvanceDelSheet = auto[key];
-                            break;
-                        }
-                    }
-                }
-
-                renderCarouselDesdeSheet(fotosAvanceDelSheet, placaLimpia);
+                // 2. Carrusel inferior leyendo automáticamente todos los archivos de la carpeta de la placa
+                renderCarouselServidor(placaLimpia);
 
             } else {
                 if (spanModelo) spanModelo.textContent = "No encontrado";
