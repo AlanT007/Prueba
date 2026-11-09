@@ -140,7 +140,7 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
 }
 
 // =========================================================================
-// CARRUSEL DINÁMICO INFERIOR (Ruta absoluta limpia para Netlify)
+// CARRUSEL DINÁMICO INFERIOR (Ruta relativa limpia y segura)
 // =========================================================================
 function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
     carouselTrack.innerHTML = '';
@@ -173,7 +173,6 @@ function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
     currentIndex = 0;
 
     listaFotos.forEach((nombreArchivoRaw, idx) => {
-        // Limpiamos cualquier ruta sobrante para quedarnos solo con el nombre puro del archivo
         const nombreLimpio = String(nombreArchivoRaw).split('/').pop().split('\\').pop().trim();
         if (!nombreLimpio) return;
 
@@ -181,11 +180,11 @@ function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
         slide.className = 'carousel-slide';
 
         const img = document.createElement('img');
-        // Usamos una ruta absoluta desde la raíz de Netlify para evitar bloqueos de rutas relativas
-        img.src = `/Imagenes/${placaLimpia}/${encodeURIComponent(nombreLimpio)}`;
+        // Usamos ruta relativa exacta `./Imagenes/[placa]/[nombre]`
+        img.src = `./Imagenes/${placaLimpia}/${encodeURIComponent(nombreLimpio)}`;
         img.alt = `Prueba de avance ${idx + 1}`;
 
-        // Auto-corrector robusto por si la extensión en el Sheet es .jpg y el archivo es .jpeg
+        // Auto-corrector de extensión y aviso visual si no se encuentra
         let intentoAlternativo = 0;
         img.onerror = function() {
             if (intentoAlternativo === 0) {
@@ -201,8 +200,12 @@ function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
                     return;
                 }
             }
-            console.error("No se pudo cargar la imagen del carrusel:", this.src);
+            // Si falla definitivamente, mostramos un aviso limpio en vez de dejar la pantalla en negro
             this.style.display = 'none';
+            const errorMsg = document.createElement('div');
+            errorMsg.style.cssText = "display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #86868b; font-size: 0.85rem; padding: 20px; text-align: center;";
+            errorMsg.textContent = `No se encontró el archivo: "${nombreLimpio}" en la carpeta Imagenes/${placaLimpia}/`;
+            slide.appendChild(errorMsg);
         };
 
         slide.appendChild(img);
