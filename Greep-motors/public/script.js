@@ -103,7 +103,9 @@ function processImageUrl(rawUrl, placaLimpia) {
     }
 }
 
-// Renderizar la foto principal normal (arriba)
+// ==========================================
+// FOTO PRINCIPAL DE ARRIBA (100% INTACTA)
+// ==========================================
 function renderMainPhoto(fotoRaw, placaLimpia) {
     const fotoValor = String(fotoRaw).trim();
     const imgExistente = imgContainer.querySelector('img');
@@ -118,10 +120,15 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
         imgElement.alt = "Foto del Vehículo";
 
         imgElement.onerror = function() {
+            if (this.src.includes(`/${placaLimpia}/`)) {
+                this.src = this.src.replace(`/${placaLimpia}/`, '/');
+                return;
+            }
             this.remove();
             imgText.style.display = "block";
             imgText.style.fontSize = "0.75rem";
-            imgText.textContent = "Sin foto principal registrada";
+            const soloNombre = fotoValor.split('/').pop().split('\\').pop();
+            imgText.textContent = `No se encontró la imagen: "${soloNombre}"`;
             imgText.classList.remove('loading');
         };
 
@@ -133,101 +140,66 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
     }
 }
 
-// Renderizar carrusel buscando dinámicamente en la carpeta de la placa específica
-function renderCarouselAutomatico(placaLimpia) {
+// ==========================================
+// CARRUSEL DINÁMICO INFERIOR (Basado en el Sheet)
+// ==========================================
+function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
     carouselTrack.innerHTML = '';
     dotsContainer.innerHTML = '';
 
-    // Lista amplia de nombres comunes y patrones de cámara que puedes tener en tus carpetas de placas
-    let candidatosArchivos = [
-        'IMG_2460.JPG', 'IMG_2476.JPG', 'IMG_2482.JPG',
-        'IMG_2460.jpg', 'IMG_2476.jpg', 'IMG_2482.jpg',
-        'Imagen3.jpeg', 'Imagen4.jpeg', 'Imagen_Carro1.jpg',
-        '1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg',
-        '1.JPG', '2.JPG', '3.JPG', '4.JPG', '5.JPG', '6.JPG', '7.JPG', '8.JPG',
-        '1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg',
-        '1.png', '2.png', '3.png'
-    ];
-
-    // Incluir un rango adicional por si usas numeraciones extendidas
-    for (let i = 2400; i <= 2500; i++) {
-        candidatosArchivos.push(`IMG_${i}.JPG`);
-        candidatosArchivos.push(`IMG_${i}.jpg`);
-    }
-
-    let imagenesValidasEncontradas = [];
-    let verificacionesPendientes = candidatosArchivos.length;
-
-    candidatosArchivos.forEach((nombreArchivo, indexIdentificador) => {
-        // Apunta directamente a la carpeta de la placa: ./Imágenes/ABC-1234/foto.jpg
-        const rutaSugerida = `./Imágenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
-
-        const imgTest = new Image();
-        imgTest.src = rutaSugerida;
-        
-        imgTest.onload = function() {
-            if (!imagenesValidasEncontradas.some(img => img.url === rutaSugerida)) {
-                imagenesValidasEncontradas.push({ id: indexIdentificador, url: rutaSugerida });
-            }
-            procesarResultados();
-        };
-
-        imgTest.onerror = function() {
-            procesarResultados();
-        };
-    });
-
-    function procesarResultados() {
-        verificacionesPendientes--;
-        
-        if (verificacionesPendientes <= 0) {
-            imagenesValidasEncontradas.sort((a, b) => a.id - b.id);
-
-            if (imagenesValidasEncontradas.length === 0) {
-                carouselTrack.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #86868b; font-size: 0.9rem; font-family: var(--font-family);">Aún no hay fotos de avance para esta placa</div>`;
-                if (prevBtn) prevBtn.style.display = 'none';
-                if (nextBtn) nextBtn.style.display = 'none';
-                return;
-            }
-
-            totalSlides = imagenesValidasEncontradas.length;
-            currentIndex = 0;
-
-            imagenesValidasEncontradas.forEach((item, idx) => {
-                const slide = document.createElement('div');
-                slide.className = 'carousel-slide';
-
-                const img = document.createElement('img');
-                img.src = item.url;
-                img.alt = `Prueba de avance ${idx + 1}`;
-
-                slide.appendChild(img);
-                carouselTrack.appendChild(slide);
-
-                const dot = document.createElement('span');
-                dot.className = `dot ${idx === 0 ? 'active' : ''}`;
-                dot.addEventListener('click', () => {
-                    currentIndex = idx;
-                    updateCarousel();
-                });
-                dotsContainer.appendChild(dot);
-            });
-
-            // Mostrar u ocultar flechas si hay más de una foto
-            if (totalSlides > 1) {
-                if (prevBtn) prevBtn.style.display = 'flex';
-                if (nextBtn) nextBtn.style.display = 'flex';
-            } else {
-                if (prevBtn) prevBtn.style.display = 'none';
-                if (nextBtn) nextBtn.style.display = 'none';
-            }
-
-            updateCarousel();
+    let listaFotos = [];
+    if (fotosAvanceRaw) {
+        if (Array.isArray(fotosAvanceRaw)) {
+            listaFotos = fotosAvanceRaw;
+        } else {
+            // Separa por comas los nombres que vengan en la celda del Sheet (ej: "113534.jpeg, 153729.jpeg")
+            listaFotos = String(fotosAvanceRaw).split(',').map(f => f.trim()).filter(f => f !== "");
         }
     }
+
+    if (listaFotos.length === 0) {
+        carouselTrack.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #86868b; font-size: 0.9rem; font-family: var(--font-family);">Aún no hay fotos de avance para esta placa</div>`;
+        if (prevBtn) prevBtn.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = 'none';
+        return;
+    }
+
+    totalSlides = listaFotos.length;
+    currentIndex = 0;
+
+    listaFotos.forEach((nombreArchivo, idx) => {
+        const slide = document.createElement('div');
+        slide.className = 'carousel-slide';
+
+        const img = document.createElement('img');
+        // Construye la ruta exacta: ./Imágenes/[PLACA]/[NOMBRE_RANDOM_DEL_SHEET]
+        img.src = `./Imágenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
+        img.alt = `Prueba de avance ${idx + 1}`;
+
+        slide.appendChild(img);
+        carouselTrack.appendChild(slide);
+
+        const dot = document.createElement('span');
+        dot.className = `dot ${idx === 0 ? 'active' : ''}`;
+        dot.addEventListener('click', () => {
+            currentIndex = idx;
+            updateCarousel();
+        });
+        dotsContainer.appendChild(dot);
+    });
+
+    if (totalSlides > 1) {
+        if (prevBtn) prevBtn.style.display = 'flex';
+        if (nextBtn) nextBtn.style.display = 'flex';
+    } else {
+        if (prevBtn) prevBtn.style.display = 'none';
+        if (nextBtn) nextBtn.style.display = 'none';
+    }
+
+    updateCarousel();
 }
 
-// 3. Validar Parámetro de Placa
+// 3. Validar Parámetro de Placa y Cargar Datos
 if (!placaBusqueda) {
     if (spanPlaca) spanPlaca.textContent = "No especificada";
     if (spanModelo) spanModelo.textContent = "---";
@@ -263,9 +235,13 @@ if (!placaBusqueda) {
                     spanEstatus.classList.remove('loading');
                 }
 
+                // 1. Foto principal de arriba (intacta)
                 const fotoPrincipal = auto.Foto || auto.foto || auto.Imagen || auto.URL || auto.Foto_Veiculo || "";
                 renderMainPhoto(fotoPrincipal, placaLimpia);
-                renderCarouselAutomatico(placaLimpia);
+
+                // 2. Fotos del carrusel de abajo (leídas desde el Google Sheet, ej: columna 'Fotos_Avance' o 'Avances')
+                const fotosAvanceDelSheet = auto.Fotos_Avance || auto.Avances || auto.Fotos || "";
+                renderCarouselDesdeSheet(fotosAvanceDelSheet, placaLimpia);
 
             } else {
                 if (spanModelo) spanModelo.textContent = "No encontrado";
