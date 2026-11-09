@@ -137,12 +137,12 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
     }
 }
 
-// Renderizar carrusel automático buscando patrones numéricos y archivos personalizados
+// Renderizar carrusel automático detectando múltiples nombres y archivos
 function renderCarouselAutomatico(placaLimpia) {
     carouselTrack.innerHTML = '';
     dotsContainer.innerHTML = '';
 
-    // Lista amplia de archivos a probar (números del 1 al 8 + los nombres personalizados que ya tienes)
+    // Lista de archivos que tienes actualmente en tu carpeta de GitHub
     let candidatosArchivos = [
         'Imagen_Carro1.jpg',
         'Imagen3.jpeg',
@@ -150,12 +150,17 @@ function renderCarouselAutomatico(placaLimpia) {
         'Imagen_Carro1.jpg.jpeg'
     ];
 
-    // Añadir también patrones numéricos del 1 al 8 con varias extensiones por si acaso
-    const extensiones = ['jpg', 'jpeg', 'png'];
-    for (let i = 1; i <= 8; i++) {
-        extensiones.forEach(ext => {
-            candidatosArchivos.push(`${i}.${ext}`);
-        });
+    // Incluir también las capturas de pantalla si las tienes numeradas o nombradas, 
+    // o puedes agregar aquí los nombres exactos que veas en tu GitHub.
+    // Ej: si tus capturas se llaman "Captura de pantalla 2026-1..." puedes agregarlas o renombrarlas de forma más simple (ej: 1.jpg, 2.jpg)
+    for (let i = 1; i <= 10; i++) {
+        candidatosArchivos.push(`Captura de pantalla 2026-${i}.png`);
+        candidatosArchivos.push(`Captura de pantalla 2026-${i}.jpg`);
+        candidatosArchivos.push(`Captura de pantalla (${i}).png`);
+        candidatosArchivos.push(`Captura de pantalla (${i}).jpg`);
+        candidatosArchivos.push(`${i}.jpg`);
+        candidatosArchivos.push(`${i}.jpeg`);
+        candidatosArchivos.push(`${i}.png`);
     }
 
     let imagenesValidasEncontradas = [];
@@ -168,7 +173,6 @@ function renderCarouselAutomatico(placaLimpia) {
         imgTest.src = rutaSugerida;
         
         imgTest.onload = function() {
-            // Evitar duplicados si coincide más de uno
             if (!imagenesValidasEncontradas.some(img => img.url === rutaSugerida)) {
                 imagenesValidasEncontradas.push({ id: indexIdentificador, url: rutaSugerida });
             }
@@ -184,7 +188,6 @@ function renderCarouselAutomatico(placaLimpia) {
         verificacionesPendientes--;
         
         if (verificacionesPendientes <= 0) {
-            // Ordenar para mantener consistencia
             imagenesValidasEncontradas.sort((a, b) => a.id - b.id);
 
             if (imagenesValidasEncontradas.length === 0) {
@@ -218,6 +221,7 @@ function renderCarouselAutomatico(placaLimpia) {
                 dotsContainer.appendChild(dot);
             });
 
+            // AQUÍ ES CLAVE: Si encuentra más de 1 imagen, muestra las flechas automáticamente
             if (totalSlides > 1) {
                 if (prevBtn) prevBtn.style.display = 'flex';
                 if (nextBtn) nextBtn.style.display = 'flex';
@@ -248,6 +252,7 @@ if (!placaBusqueda) {
     }
     if (carouselText) {
         carouselText.textContent = "Sin placa en URL";
+        carouselText.classList.resetsub?.();
         carouselText.classList.remove('loading');
     }
 } else {
