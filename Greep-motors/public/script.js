@@ -71,11 +71,13 @@ function updateCarousel() {
 
 function setupCarouselEvents() {
     if (prevBtn && nextBtn) {
-        prevBtn.addEventListener('click', () => {
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             currentIndex = (currentIndex > 0) ? currentIndex - 1 : totalSlides - 1;
             updateCarousel();
         });
-        nextBtn.addEventListener('click', () => {
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             currentIndex = (currentIndex < totalSlides - 1) ? currentIndex + 1 : 0;
             updateCarousel();
         });
@@ -142,7 +144,6 @@ function renderCarouselAutomatico(placaLimpia) {
     carouselTrack.innerHTML = '';
     dotsContainer.innerHTML = '';
 
-    // Lista de archivos que tienes actualmente en tu carpeta de GitHub
     let candidatosArchivos = [
         'Imagen_Carro1.jpg',
         'Imagen3.jpeg',
@@ -150,9 +151,6 @@ function renderCarouselAutomatico(placaLimpia) {
         'Imagen_Carro1.jpg.jpeg'
     ];
 
-    // Incluir también las capturas de pantalla si las tienes numeradas o nombradas, 
-    // o puedes agregar aquí los nombres exactos que veas en tu GitHub.
-    // Ej: si tus capturas se llaman "Captura de pantalla 2026-1..." puedes agregarlas o renombrarlas de forma más simple (ej: 1.jpg, 2.jpg)
     for (let i = 1; i <= 10; i++) {
         candidatosArchivos.push(`Captura de pantalla 2026-${i}.png`);
         candidatosArchivos.push(`Captura de pantalla 2026-${i}.jpg`);
@@ -194,6 +192,8 @@ function renderCarouselAutomatico(placaLimpia) {
                 carouselText.style.display = "block";
                 carouselText.textContent = "Sin pruebas de avance registradas";
                 carouselText.classList.remove('loading');
+                if (prevBtn) prevBtn.style.display = 'none';
+                if (nextBtn) nextBtn.style.display = 'none';
                 return;
             }
 
@@ -221,7 +221,7 @@ function renderCarouselAutomatico(placaLimpia) {
                 dotsContainer.appendChild(dot);
             });
 
-            // AQUÍ ES CLAVE: Si encuentra más de 1 imagen, muestra las flechas automáticamente
+            // Mostrar u ocultar flechas dependiendo si hay más de 1 imagen
             if (totalSlides > 1) {
                 if (prevBtn) prevBtn.style.display = 'flex';
                 if (nextBtn) nextBtn.style.display = 'flex';
@@ -252,7 +252,6 @@ if (!placaBusqueda) {
     }
     if (carouselText) {
         carouselText.textContent = "Sin placa en URL";
-        carouselText.classList.resetsub?.();
         carouselText.classList.remove('loading');
     }
 } else {
