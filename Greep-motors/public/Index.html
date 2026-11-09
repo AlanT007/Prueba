@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>Estatus de tu Vehículo - GREP MOTORS ELITE</title>
     <link rel="stylesheet" href="Pruebas.css">
 </head>
@@ -15,10 +15,10 @@
     </div>
 
     <div class="main-wrapper">
-        <!-- Tarjeta Principal con Animación de Entrada -->
+        <!-- Tarjeta Principal -->
         <div class="card glass-effect">
             
-            <!-- Columna Izquierda: Foto y Tarjeta QR del vehículo -->
+            <!-- Columna Izquierda: Foto normal del vehículo y Tarjeta QR -->
             <div class="left-section">
                 <div class="image-wrapper" id="image-wrapper-container">
                     <span class="loading" id="img-text">Cargando foto...</span>
@@ -49,7 +49,7 @@
                     </div>
                 </div>
 
-                <!-- Contenedor de Datos (Listos para recibir datos de tu Base de Datos) -->
+                <!-- Contenedor de Datos -->
                 <div class="data-grid-cards">
                     <div class="data-card">
                         <span class="label">PLACA BUSCADA</span>
@@ -79,7 +79,7 @@
                 </div>
 
                 <div>
-                    <!-- Tarjeta de Estatus Dinámica (Resaltada en Verde) -->
+                    <!-- Tarjeta de Estatus Dinámica -->
                     <div class="status-card">
                         <div class="status-indicator-dot"></div>
                         <span class="label">ESTATUS ACTUAL</span>
@@ -89,23 +89,49 @@
             </div>
         </div>
 
+        <!-- Apartado Inferior: Pruebas de Avance (Carrusel Automático) -->
+        <div class="card glass-effect bottom-progress-section">
+            <div class="section-badge-header">
+                <h3>Pruebas de lo que llevamos</h3>
+                <p class="transparency-note">
+                    "En <strong>GREP MOTORS</strong> nuestro deber es tener a nuestros clientes al pendiente de todo. Queremos que veas cada avance con total transparencia y confianza."
+                </p>
+            </div>
+
+            <div class="carousel-container" id="carousel-container">
+                <div class="carousel-track" id="carousel-track">
+
+                    <!-- Las imágenes dinámicas del carrusel se cargarán aquí -->
+                
+                </div>
+
+                <span class="loading" id="carousel-text">Cargando evidencias...</span>
+
+                <!-- Botones de Navegación -->
+                <button class="carousel-btn prev-btn" id="prev-btn" style="display: none;" aria-label="Anterior">&#10094;</button>
+                <button class="carousel-btn next-btn" id="next-btn" style="display: none;" aria-label="Siguiente">&#10095;</button>
+
+                <!-- Indicadores de Puntos -->
+                <div class="carousel-dots" id="carousel-dots"></div>
+            </div>
+        </div>
+
         <!-- Barra Inferior: Soporte WhatsApp, Ubicación Google y Redes Sociales -->
         <div class="footer-bar">
             <!-- Botón de Ayuda WhatsApp -->
-            <!-- Botón de Ayuda WhatsApp con ID -->
-<a href="https://wa.me/525547667757?text=Hola,%20necesito%20información%20sobre%20el%20estatus%20de%20mi%20vehículo." target="_blank" class="whatsapp-support" id="wa-support-btn">
-    <div class="wa-icon">💬</div>
-    <div class="wa-text">
-        <h4>¿Necesitas ayuda con tu servicio?</h4>
-        <span>+52 55 4766 7757 (Escríbenos directo)</span>
-    </div>
-    <div class="wa-arrow">→</div>
-</a>
+            <a href="https://wa.me/5215500000000?text=Hola,%20necesito%20información%20sobre%20el%20estatus%20de%20mi%20vehículo." target="_blank" rel="noopener noreferrer" class="whatsapp-support">
+                <div class="wa-icon">💬</div>
+                <div class="wa-text">
+                    <h4>¿Necesitas ayuda con tu servicio?</h4>
+                    <span>+52 55 0000 0000 (Escríbenos directo)</span>
+                </div>
+                <div class="wa-arrow">→</div>
+            </a>
 
-            <!-- Botón de Localiza tu tienda con Pin Oficial Multicolor de Google Maps -->
-            <a href="https://www.google.com/maps/place/GREP+MOTORS/@19.3574339,-99.295783,17z/data=!3m1!4b1!4m6!3m5!1s0x85d207304a0cab15:0x25678d7a9a46f204!8m2!3d19.3574339!4d-99.295783!16s%2Fg%2F1tdd10mb?entry=ttu&g_ep=EgoyMDI2MTAwNy4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="google-location-btn">
+            <!-- Botón de Localiza tu tienda -->
+            <a href="https://www.google.com/maps/place/GREP+MOTORS/@19.3574339,-99.295783,17z/data=!3m1!4b1!4m6!3m5!1s0x85d207304a0cab15:0x25678d7a9a46f204!8m2!3d19.3574339!4d-99.295783!16s%2Fg%2F1tdd10mb?entry=ttu" target="_blank" rel="noopener noreferrer" class="google-location-btn">
                 <div class="g-pin-icon">
-                    <svg viewBox="0 0 24 24" width="28" height="28">
+                    <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
                         <path fill="#EA4335" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
                         <path fill="#4285F4" d="M12 2c3.87 0 7 3.13 7 7 0 5.25-7 13-7 13S5 14.25 5 9c0-3.87 3.13-7 7-7z" opacity="0.3"/>
                         <path fill="#FBBC05" d="M12 2C8.13 2 5 5.13 5 9c0 1.91.76 3.64 2 4.93L12 2z"/>
@@ -122,16 +148,16 @@
                 <div class="g-arrow">→</div>
             </a>
 
-            <!-- Redes Sociales en forma de Bolitas Coloridas -->
+            <!-- Redes Sociales -->
             <div class="social-icons">
-                <a href="https://www.tiktok.com/@grep.motors?_r=1&_t=ZS-9ApjgFIiIrM" target="_blank" class="social-btn tiktok" title="TikTok">
-                    <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
+                <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" class="social-btn tiktok" title="TikTok" aria-label="TikTok">
+                    <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
                 </a>
-                <a href="https://www.instagram.com/grepmotors/" target="_blank" class="social-btn instagram" title="Instagram">
-                    <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                <a href="https://www.instagram.com/grepmotors/" target="_blank" rel="noopener noreferrer" class="social-btn instagram" title="Instagram" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                 </a>
-                <a href="https://www.facebook.com/p/GREP-Motors-100063668315767/" target="_blank" class="social-btn facebook" title="Facebook">
-                    <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                <a href="https://www.facebook.com/p/GREP-Motors-100063668315767/" target="_blank" rel="noopener noreferrer" class="social-btn facebook" title="Facebook" aria-label="Facebook">
+                    <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
                 </a>
             </div>
         </div>
