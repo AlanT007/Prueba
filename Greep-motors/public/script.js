@@ -98,7 +98,7 @@ function processImageUrl(rawUrl, placaLimpia) {
         return fotoValor;
     } else {
         const nombreArchivo = fotoValor.split('/').pop().split('\\').pop();
-        return `./imagenes/${placaLimpia}/${nombreArchivo}`;
+        return `./Imagenes/${placaLimpia}/${nombreArchivo}`;
     }
 }
 
@@ -137,41 +137,55 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
     }
 }
 
-// Renderizar carrusel automático buscando del 1 al 8 con extensiones jpg, jpeg, png
+// Renderizar carrusel automático buscando patrones numéricos y archivos personalizados
 function renderCarouselAutomatico(placaLimpia) {
     carouselTrack.innerHTML = '';
     dotsContainer.innerHTML = '';
 
-    const maxFotosPrueba = 8;
+    // Lista amplia de archivos a probar (números del 1 al 8 + los nombres personalizados que ya tienes)
+    let candidatosArchivos = [
+        'Imagen_Carro1.jpg',
+        'Imagen3.jpeg',
+        'Imagen4.jpeg',
+        'Imagen_Carro1.jpg.jpeg'
+    ];
+
+    // Añadir también patrones numéricos del 1 al 8 con varias extensiones por si acaso
     const extensiones = ['jpg', 'jpeg', 'png'];
-    let imagenesValidasEncontradas = [];
-    let verificacionesPendientes = maxFotosPrueba * extensiones.length;
-
-    for (let i = 1; i <= maxFotosPrueba; i++) {
+    for (let i = 1; i <= 8; i++) {
         extensiones.forEach(ext => {
-            const rutaSugerida = `./imagenes/${placaLimpia}/${i}.${ext}`;
-
-            const imgTest = new Image();
-            imgTest.src = rutaSugerida;
-            
-            imgTest.onload = function() {
-                if (!imagenesValidasEncontradas.some(img => img.index === i)) {
-                    imagenesValidasEncontradas.push({ index: i, url: rutaSugerida });
-                }
-                procesarResultados();
-            };
-
-            imgTest.onerror = function() {
-                procesarResultados();
-            };
+            candidatosArchivos.push(`${i}.${ext}`);
         });
     }
+
+    let imagenesValidasEncontradas = [];
+    let verificacionesPendientes = candidatosArchivos.length;
+
+    candidatosArchivos.forEach((nombreArchivo, indexIdentificador) => {
+        const rutaSugerida = `./Imagenes/${placaLimpia}/${nombreArchivo}`;
+
+        const imgTest = new Image();
+        imgTest.src = rutaSugerida;
+        
+        imgTest.onload = function() {
+            // Evitar duplicados si coincide más de uno
+            if (!imagenesValidasEncontradas.some(img => img.url === rutaSugerida)) {
+                imagenesValidasEncontradas.push({ id: indexIdentificador, url: rutaSugerida });
+            }
+            procesarResultados();
+        };
+
+        imgTest.onerror = function() {
+            procesarResultados();
+        };
+    });
 
     function procesarResultados() {
         verificacionesPendientes--;
         
         if (verificacionesPendientes <= 0) {
-            imagenesValidasEncontradas.sort((a, b) => a.index - b.index);
+            // Ordenar para mantener consistencia
+            imagenesValidasEncontradas.sort((a, b) => a.id - b.id);
 
             if (imagenesValidasEncontradas.length === 0) {
                 carouselText.style.display = "block";
