@@ -177,7 +177,7 @@ function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
         slide.className = 'carousel-slide';
 
         const img = document.createElement('img');
-        img.src = `./imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
+        img.src = `./Imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
         img.alt = `Prueba de avance ${idx + 1}`;
 
         // Auto-corrector inteligente si hay discrepancias entre .jpg y .jpeg
