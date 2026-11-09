@@ -139,23 +139,25 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
     }
 }
 
-// Renderizar carrusel automático con codificación segura de espacios y nombres
+// Renderizar carrusel automático integrando todos tus nombres reales actuales
 function renderCarouselAutomatico(placaLimpia) {
     carouselTrack.innerHTML = '';
     dotsContainer.innerHTML = '';
 
+    // Lista exacta de los archivos que ya tienes en tu GitHub
     let candidatosArchivos = [
+        '113534.jpeg',
+        '153729.jpeg',
         'Imagen_Carro1.jpg',
-        'Imagen3.jpeg',
-        'Imagen4.jpeg',
-        'Imagen_Carro1.jpg.jpeg'
+        'Imagen_Carro1.jpg.jpeg',
+        'Captura de pantalla 2026-11-02 153734.png',
+        'Captura de pantalla 2026-11-02 153926.png',
+        'Captura de pantalla 2026-11-02 154244.png',
+        'Captura de pantalla 2026-11-05 135159.png'
     ];
 
-    for (let i = 1; i <= 15; i++) {
-        candidatosArchivos.push(`Captura de pantalla 2026-${i}.png`);
-        candidatosArchivos.push(`Captura de pantalla 2026-${i}.jpg`);
-        candidatosArchivos.push(`Captura de pantalla (${i}).png`);
-        candidatosArchivos.push(`Captura de pantalla (${i}).jpg`);
+    // Añadir también numeraciones estándar por si agregas más adelante
+    for (let i = 1; i <= 10; i++) {
         candidatosArchivos.push(`${i}.jpg`);
         candidatosArchivos.push(`${i}.jpeg`);
         candidatosArchivos.push(`${i}.png`);
@@ -165,7 +167,6 @@ function renderCarouselAutomatico(placaLimpia) {
     let verificacionesPendientes = candidatosArchivos.length;
 
     candidatosArchivos.forEach((nombreArchivo, indexIdentificador) => {
-        // Uso de encodeURIComponent para evitar fallos con espacios en los nombres
         const rutaSugerida = `./Imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
 
         const imgTest = new Image();
@@ -222,8 +223,8 @@ function renderCarouselAutomatico(placaLimpia) {
                 dotsContainer.appendChild(dot);
             });
 
-            // Muestra las flechas siempre que haya 1 o más imágenes disponibles
-            if (totalSlides > 0) {
+            // Las flechas aparecen SOLAMENTE si hay más de 1 imagen en total
+            if (totalSlides > 1) {
                 if (prevBtn) prevBtn.style.display = 'flex';
                 if (nextBtn) nextBtn.style.display = 'flex';
             } else {
