@@ -138,26 +138,37 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
     }
 }
 
-// Renderizar carrusel dinámico por carpeta de placa
+// Renderizar carrusel dinámico integrado con patrones IMG_XXXX y numéricos
 function renderCarouselAutomatico(placaLimpia) {
     carouselTrack.innerHTML = '';
     dotsContainer.innerHTML = '';
 
-    // Generador dinámico de candidatos genéricos comunes y numeraciones (1 al 15)
     let candidatosArchivos = [
-        'Imagen_Carro1.jpg',
-        'Imagen1.jpg',
-        'Imagen2.jpg',
-        'Foto1.jpg',
-        'Foto2.jpg'
+        // Archivos específicos que tienes en NMH-82-94
+        'IMG_2460.JPG',
+        'IMG_2476.JPG',
+        'IMG_2482.JPG',
+        'IMG_2460.jpg',
+        'IMG_2476.jpg',
+        'IMG_2482.jpg',
+        'Imagen3.jpeg',
+        'Imagen4.jpeg',
+        'Imagen_Carro1.jpg'
     ];
 
-    for (let i = 1; i <= 15; i++) {
+    // Rango amplio de secuencias numéricas y de cámaras (IMG_XXXX)
+    for (let i = 2400; i <= 2550; i++) {
+        candidatosArchivos.push(`IMG_${i}.JPG`);
+        candidatosArchivos.push(`IMG_${i}.jpg`);
+        candidatosArchivos.push(`IMG_${i}.jpeg`);
+    }
+
+    for (let i = 1; i <= 20; i++) {
         candidatosArchivos.push(`${i}.jpg`);
+        candidatosArchivos.push(`${i}.JPG`);
         candidatosArchivos.push(`${i}.jpeg`);
         candidatosArchivos.push(`${i}.png`);
         candidatosArchivos.push(`avance_${i}.jpg`);
-        candidatosArchivos.push(`avance (${i}).jpg`);
     }
 
     let imagenesValidasEncontradas = [];
@@ -188,7 +199,6 @@ function renderCarouselAutomatico(placaLimpia) {
             imagenesValidasEncontradas.sort((a, b) => a.id - b.id);
 
             if (imagenesValidasEncontradas.length === 0) {
-                // Si no hay imágenes en la carpeta, mostramos texto amigable en lugar de pantalla en negro
                 carouselTrack.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #86868b; font-size: 0.9rem; font-family: var(--font-family);">Aún no hay fotos de avance para esta placa</div>`;
                 if (prevBtn) prevBtn.style.display = 'none';
                 if (nextBtn) nextBtn.style.display = 'none';
@@ -218,7 +228,7 @@ function renderCarouselAutomatico(placaLimpia) {
                 dotsContainer.appendChild(dot);
             });
 
-            // Mostrar u ocultar flechas dependiendo de si hay más de 1 foto
+            // Mostrar u ocultar flechas según la cantidad de imágenes
             if (totalSlides > 1) {
                 if (prevBtn) prevBtn.style.display = 'flex';
                 if (nextBtn) nextBtn.style.display = 'flex';
