@@ -221,7 +221,6 @@ function renderCarouselAutomatico(placaLimpia) {
                 dotsContainer.appendChild(dot);
             });
 
-            // Mostrar u ocultar flechas dependiendo si hay más de 1 imagen
             if (totalSlides > 1) {
                 if (prevBtn) prevBtn.style.display = 'flex';
                 if (nextBtn) nextBtn.style.display = 'flex';
