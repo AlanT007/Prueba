@@ -98,7 +98,6 @@ function processImageUrl(rawUrl, placaLimpia) {
         return fotoValor;
     } else {
         const nombreArchivo = fotoValor.split('/').pop().split('\\').pop();
-        // Ruta corregida con I mayúscula
         return `./Imagenes/${placaLimpia}/${nombreArchivo}`;
     }
 }
@@ -141,7 +140,7 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
 }
 
 // =========================================================================
-// CARRUSEL DINÁMICO INFERIOR (Apunta a ./Imagenes/[placa]/ con auto-corrector)
+// CARRUSEL DINÁMICO INFERIOR (Apunta directo a ./Imagenes/[placa]/)
 // =========================================================================
 function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
     carouselTrack.innerHTML = '';
@@ -178,11 +177,11 @@ function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
         slide.className = 'carousel-slide';
 
         const img = document.createElement('img');
-        // Ruta exacta apuntando a la carpeta de la placa con I mayúscula: ./Imagenes/[placa]/[nombre]
-        img.src = `/Imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
+        // Ruta directa basada en tu estructura: ./Imagenes/[placa]/[nombre_archivo]
+        img.src = `./Imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
         img.alt = `Prueba de avance ${idx + 1}`;
 
-        // Auto-corrector inteligente si hay discrepancias entre .jpg y .jpeg
+        // Auto-corrector por si en el Sheet pusiste .jpg y el archivo es .jpeg o viceversa
         let intentoAlternativo = 0;
         img.onerror = function() {
             if (intentoAlternativo === 0) {
@@ -269,7 +268,7 @@ if (!placaBusqueda) {
                 const fotoPrincipal = auto.Foto || auto.foto || auto.Imagen || auto.URL || auto.Foto_Veiculo || "";
                 renderMainPhoto(fotoPrincipal, placaLimpia);
 
-                // 2. Fotos del carrusel de abajo (leídas desde Google Sheets)
+                // 2. Fotos del carrusel de abajo (leídas desde Google Sheets y buscando en ./Imagenes/[placa]/)
                 const fotosAvanceDelSheet = auto.Fotos_Avance || auto.Avances || auto.Fotos || "";
                 renderCarouselDesdeSheet(fotosAvanceDelSheet, placaLimpia);
 
