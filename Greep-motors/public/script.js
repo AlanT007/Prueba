@@ -100,7 +100,7 @@ function processImageUrl(rawUrl, placaLimpia) {
         return fotoValor;
     } else {
         const nombreArchivo = fotoValor.split('/').pop().split('\\').pop();
-        return `./Imagenes/${placaLimpia}/${nombreArchivo}`;
+        return `./Imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
     }
 }
 
@@ -139,7 +139,7 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
     }
 }
 
-// Renderizar carrusel automático detectando múltiples nombres y archivos
+// Renderizar carrusel automático con codificación segura de espacios y nombres
 function renderCarouselAutomatico(placaLimpia) {
     carouselTrack.innerHTML = '';
     dotsContainer.innerHTML = '';
@@ -151,7 +151,7 @@ function renderCarouselAutomatico(placaLimpia) {
         'Imagen_Carro1.jpg.jpeg'
     ];
 
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 15; i++) {
         candidatosArchivos.push(`Captura de pantalla 2026-${i}.png`);
         candidatosArchivos.push(`Captura de pantalla 2026-${i}.jpg`);
         candidatosArchivos.push(`Captura de pantalla (${i}).png`);
@@ -165,7 +165,8 @@ function renderCarouselAutomatico(placaLimpia) {
     let verificacionesPendientes = candidatosArchivos.length;
 
     candidatosArchivos.forEach((nombreArchivo, indexIdentificador) => {
-        const rutaSugerida = `./Imagenes/${placaLimpia}/${nombreArchivo}`;
+        // Uso de encodeURIComponent para evitar fallos con espacios en los nombres
+        const rutaSugerida = `./Imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
 
         const imgTest = new Image();
         imgTest.src = rutaSugerida;
@@ -221,7 +222,8 @@ function renderCarouselAutomatico(placaLimpia) {
                 dotsContainer.appendChild(dot);
             });
 
-            if (totalSlides > 1) {
+            // Muestra las flechas siempre que haya 1 o más imágenes disponibles
+            if (totalSlides > 0) {
                 if (prevBtn) prevBtn.style.display = 'flex';
                 if (nextBtn) nextBtn.style.display = 'flex';
             } else {
