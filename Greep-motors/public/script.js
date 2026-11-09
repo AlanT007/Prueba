@@ -21,7 +21,7 @@ const qrImg = document.getElementById('qr-img');
 let currentIndex = 0;
 let totalSlides = 0;
 
-// Soporte de gestos táctiles (Swipe) para Móviles/Tablets (Android / iPhone)
+// Soporte de gestos táctiles (Swipe) para Móviles/Tablets
 let touchStartX = 0;
 let touchEndX = 0;
 
@@ -87,15 +87,12 @@ function setupCarouselEvents() {
     }
 }
 
-
 function processImageUrl(rawUrl, placaLimpia) {
     const fotoValor = String(rawUrl).trim();
     if (!fotoValor || fotoValor === "null" || fotoValor === "undefined" || fotoValor === "Archivo") return null;
 
     if (fotoValor.includes('drive.google.com')) {
-
         const match = fotoValor.match(/\/d\/([^\/]+)/) || fotoValor.match(/id=([^&]+)/);
-
         return match && match[1] ? `https://lh3.googleusercontent.com/d/${match[1]}` : fotoValor;
     } else if (fotoValor.startsWith('http://') || fotoValor.startsWith('https://')) {
         return fotoValor;
@@ -104,7 +101,6 @@ function processImageUrl(rawUrl, placaLimpia) {
         return `./imagenes/${placaLimpia}/${nombreArchivo}`;
     }
 }
-
 
 // Renderizar la foto principal normal (arriba)
 function renderMainPhoto(fotoRaw, placaLimpia) {
@@ -141,7 +137,7 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
     }
 }
 
-// Renderizar carrusel automático buscando del 1 al 8 con extensiones jpg, jpeg, png en la carpeta de la placa
+// Renderizar carrusel automático buscando del 1 al 8 con extensiones jpg, jpeg, png
 function renderCarouselAutomatico(placaLimpia) {
     carouselTrack.innerHTML = '';
     dotsContainer.innerHTML = '';
