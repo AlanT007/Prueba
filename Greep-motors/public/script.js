@@ -98,7 +98,8 @@ function processImageUrl(rawUrl, placaLimpia) {
         return fotoValor;
     } else {
         const nombreArchivo = fotoValor.split('/').pop().split('\\').pop();
-        return `./imagenes/${placaLimpia}/${nombreArchivo}`;
+        // Ruta corregida con I mayúscula
+        return `./Imagenes/${placaLimpia}/${nombreArchivo}`;
     }
 }
 
@@ -140,7 +141,7 @@ function renderMainPhoto(fotoRaw, placaLimpia) {
 }
 
 // =========================================================================
-// CARRUSEL DINÁMICO INFERIOR (Con auto-corrector de extensiones .jpg / .jpeg)
+// CARRUSEL DINÁMICO INFERIOR (Apunta a ./Imagenes/[placa]/ con auto-corrector)
 // =========================================================================
 function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
     carouselTrack.innerHTML = '';
@@ -177,7 +178,8 @@ function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
         slide.className = 'carousel-slide';
 
         const img = document.createElement('img');
-        img.src = `./Imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
+        // Ruta exacta apuntando a la carpeta de la placa con I mayúscula: ./Imagenes/[placa]/[nombre]
+        img.src = `/Imagenes/${placaLimpia}/${encodeURIComponent(nombreArchivo)}`;
         img.alt = `Prueba de avance ${idx + 1}`;
 
         // Auto-corrector inteligente si hay discrepancias entre .jpg y .jpeg
@@ -196,7 +198,6 @@ function renderCarouselDesdeSheet(fotosAvanceRaw, placaLimpia) {
                     return;
                 }
             }
-            // Si de plano no encuentra ninguna variante, oculta el slide o muestra un respaldo
             this.style.opacity = '0.3';
         };
 
