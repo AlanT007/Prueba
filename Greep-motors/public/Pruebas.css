@@ -272,8 +272,8 @@ body {
 
 .carousel-container {
     width: 100%;
-    height: 280px;
-    background: #000000;
+    height: 270px;
+    background: #050508;
     border-radius: 20px;
     position: relative;
     overflow: hidden;
@@ -281,7 +281,7 @@ body {
     justify-content: flex-start;
     align-items: center;
     border: 1px solid var(--card-border);
-    box-shadow: inset 0 4px 20px rgba(0,0,0,0.7);
+    box-shadow: inset 0 4px 20px rgba(0,0,0,0.8);
     touch-action: pan-y;
 }
 
@@ -300,16 +300,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #000000;
+    background-color: #050508;
     flex-shrink: 0;
+    position: relative;
 }
 
-/* AJUSTE PERFECTO: Ocupa todo el ancho y alto del contenedor sin deformarse ni verse gigante */
+/* TAMAÑO EQUILIBRADO: Usa contain para mostrar la foto completa sin recortes extremos, 
+   con un max-height y max-width controlado para que no se vea gigante ni diminuta */
 .carousel-slide img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
+    padding: 8px; /* Margen interno sutil para que respire la foto */
 }
 
 /* ==========================================
@@ -324,15 +327,15 @@ body {
     -webkit-backdrop-filter: blur(8px);
     color: white;
     border: 2px solid rgba(255, 255, 255, 0.3);
-    width: 46px;
-    height: 46px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 50;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     box-shadow: 0 4px 15px rgba(0,0,0,0.7);
     transition: background 0.2s, transform 0.2s, border-color 0.2s;
 }
@@ -344,11 +347,11 @@ body {
 }
 
 .prev-btn { 
-    left: 16px; 
+    left: 14px; 
 }
 
 .next-btn { 
-    right: 16px; 
+    right: 14px; 
 }
 
 .carousel-dots {
